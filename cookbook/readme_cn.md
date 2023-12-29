@@ -80,17 +80,17 @@
 ├── 01-SimpleDemo
 │   └── TensorRT8.5
 ├── 02-API
-│   ├── AlgorithmSelector
-│   ├── AuxStream
-│   ├── Builder
-│   ├── BuilderConfig
-│   ├── CudaEngine
-│   ├── EngineInspector
-│   ├── ErrorRecoder
-│   ├── ExecutionContext
-│   ├── GPUAllocator
-│   ├── HostMemory
-│   ├── INT8-PTQ
+│   ├── AlgorithmSelector    // 算法策略选择器   
+│   ├── AuxStream            // 辅助流   
+│   ├── Builder              // 构建器
+│   ├── BuilderConfig        // 构建器配置  
+│   ├── CudaEngine           // cuda 引擎  
+│   ├── EngineInspector      // 引擎检查工具  
+│   ├── ErrorRecoder         // 错误记录
+│   ├── ExecutionContext     // 执行器上下文
+│   ├── GPUAllocator         // gpu内存分配器
+│   ├── HostMemory           // 主机内存
+│   ├── INT8-PTQ             // 后量化 
 │   │   └── C++
 │   ├── Layer
 │   │   ├── ActivationLayer
@@ -143,7 +143,7 @@
 │   ├── ProfilingVerbosity
 │   ├── Refit
 │   ├── Runtime
-│   ├── TacticSource
+│   ├── TacticSource   // 策略来源   
 │   ├── Tensor
 │   └── TimingCache
 ├── 03-BuildEngineByTensorRTAPI
@@ -225,14 +225,14 @@
 │   │   └── trex.egg-info
 │   └── trtexec
 ├── 08-Advance
-│   ├── BuilderOptimizationLevel
-│   ├── CreateExecutionContextWithoutDeviceMemory
-│   ├── C++StaticCompilation
-│   ├── CudaGraph
-│   ├── DataFormat
-│   ├── DynamicShapeOutput
-│   ├── EmptyTensor
-│   ├── Event
+│   ├── BuilderOptimizationLevel       // 构建器优化级别 
+│   ├── CreateExecutionContextWithoutDeviceMemory  // 不使用设备内存构建执行器上下文  
+│   ├── C++StaticCompilation // cpp 静态编译 
+│   ├── CudaGraph  // cuda graph
+│   ├── DataFormat // 数据格式
+│   ├── DynamicShapeOutput // 输出shape为动态 
+│   ├── EmptyTensor   // 空tensor 
+│   ├── Event   // 事件 
 │   ├── ExternalSource
 │   ├── HardwareCompatibility
 │   ├── LabeledDimension
