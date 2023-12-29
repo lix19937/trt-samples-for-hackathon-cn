@@ -4,7 +4,6 @@
 
 ## 有用的链接 
 
-+ [TensorRT Download](https://developer.nvidia.com/nvidia-tensorrt-download)
 + [TensorRT Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
 + [Document](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) and [Document Archives](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
 + [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html) and [Supporting Matrix (Old version)](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-843/support-matrix/index.html)
