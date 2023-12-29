@@ -16,11 +16,7 @@
 
 + 其他:
   + [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
-  + [TF-TRT](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html)
-  + [Torch-TensorRT](https://pytorch.org/TensorRT/)
   + [ONNX model zoo](https://github.com/onnx/models)
-  + [tensorrtx (build engine by API)](https://github.com/wang-xinyu/tensorrtx)
-
 ---
 
 ## 目录  
