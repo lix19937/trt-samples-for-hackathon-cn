@@ -12,10 +12,8 @@
 + [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
 + [TensorRT Open Source Software](https://github.com/NVIDIA/TensorRT)
 + [NSight- Systems](https://developer.nvidia.com/nsight-systems)
-
-+ 其他:
-  + [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
-  + [ONNX model zoo](https://github.com/onnx/models)
++ [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
++ [ONNX model zoo](https://github.com/onnx/models)
 ---
 
 ## 目录  
