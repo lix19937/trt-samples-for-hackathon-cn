@@ -12,3 +12,8 @@
 python3 getOnnxModel.py
 python3 main.py
 ```
+
+## 说明  
+
+使用onnx-gs 构建 onnx 文件   
+
