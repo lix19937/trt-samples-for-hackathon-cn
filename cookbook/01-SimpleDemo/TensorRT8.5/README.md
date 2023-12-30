@@ -1,12 +1,13 @@
 
 
 使用TRT API的基本示例     
-## 编译命令
 
+## 编译命令    
 ```shell
 make test
-```
+```    
 
+## 说明    
 ```cpp  
 // 设置 TRT log 级别  
 static Logger     gLogger(ILogger::Severity::kERROR);
