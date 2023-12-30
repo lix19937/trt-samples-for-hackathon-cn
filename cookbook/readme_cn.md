@@ -1,20 +1,6 @@
 `以下内容来自 lix19937 梳理精简，版权归属 NVIDIA `     
 
-# TensorRT 菜谱   
-
-## 有用的链接 
-
-+ [TensorRT Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
-+ [Document](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) and [Document Archives](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
-+ [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)      
-+ [C++ API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api) and [Python API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/) and [API Change](https://docs.nvidia.com/deeplearning/tensorrt/api/index.html)
-+ [Operator algorithm](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/)
-+ [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
-+ [TensorRT Open Source Software](https://github.com/NVIDIA/TensorRT)
-+ [NSight- Systems](https://developer.nvidia.com/nsight-systems)
-+ [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
-+ [ONNX model zoo](https://github.com/onnx/models)
----
+# TensorRT 菜谱精选      
 
 ## 目录  
 
@@ -272,3 +258,17 @@
 │   └── TensorRTElementwiseBug
 └── include
 ```
+
+## 有用的链接 
+
++ [TensorRT Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
++ [Document](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) and [Document Archives](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
++ [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)      
++ [C++ API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api) and [Python API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/) and [API Change](https://docs.nvidia.com/deeplearning/tensorrt/api/index.html)
++ [Operator algorithm](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/)
++ [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
++ [TensorRT Open Source Software](https://github.com/NVIDIA/TensorRT)
++ [NSight- Systems](https://developer.nvidia.com/nsight-systems)
++ [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
++ [ONNX model zoo](https://github.com/onnx/models)
+---
