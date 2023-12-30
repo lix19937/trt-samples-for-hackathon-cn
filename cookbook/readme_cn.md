@@ -20,7 +20,9 @@
 
 ### include
 
-+ 例程使用的通用文件   
++ 例程使用的通用文件
+
+### 00-MNISTData -- mnist 数据集获取     
 
 ### 01-SimpleDemo -- 使用TensorRT的完整示例    
 
