@@ -126,7 +126,7 @@
 │   ├── Runtime              // 运行时 
 │   ├── TacticSource         // 策略来源   
 │   ├── Tensor               // 张量  
-│   └── TimingCache          // 时序缓存  
+│   └── TimingCache          // timing缓存  trtexec --timingCacheFile=  
 ├── 03-BuildEngineByTensorRTAPI  // 通过API 构建引擎 
 │   ├── MNISTExample-pyTorch
 │   │   └── C++
