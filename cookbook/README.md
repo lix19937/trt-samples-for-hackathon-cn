@@ -1,5 +1,7 @@
 # TensorRT Cookbook
 
+## [中文版](./readme_cn.md)    
+
 ## General Introduction
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
