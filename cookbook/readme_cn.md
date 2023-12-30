@@ -127,18 +127,18 @@
 │   │   ├── SoftmaxLayer
 │   │   ├── TopKLayer
 │   │   └── UnaryLayer
-│   ├── Logger      // 日志器
-│   ├── Network     // 网络
-│   ├── ONNXParser  // 解析器
+│   ├── Logger               // 日志器
+│   ├── Network              // 网络
+│   ├── ONNXParser           // 解析器
 │   ├── OptimizationProfile  // 优化分析
 │   ├── OutputAllocator      // 输出分配器
-│   ├── Profiler            // 分析器
-│   ├── ProfilingVerbosity  // 分析显示   
-│   ├── Refit   // 重装配  常用于GNN 网络    
-│   ├── Runtime // 运行时 
-│   ├── TacticSource   // 策略来源   
-│   ├── Tensor         // 张量  
-│   └── TimingCache    // 时序缓存  
+│   ├── Profiler             // 分析器
+│   ├── ProfilingVerbosity   // 分析显示   
+│   ├── Refit                // 重装配  常用于GNN 网络    
+│   ├── Runtime              // 运行时 
+│   ├── TacticSource         // 策略来源   
+│   ├── Tensor               // 张量  
+│   └── TimingCache          // 时序缓存  
 ├── 03-BuildEngineByTensorRTAPI  // 通过API 构建引擎 
 │   ├── MNISTExample-pyTorch
 │   │   └── C++
@@ -147,8 +147,7 @@
 │   ├── pyTorch-ONNX-TensorRT
 │   │   └── C++
 │   ├── pyTorch-ONNX-TensorRT-QAT
-├── 05-Plugin  // 插件
-│   ├── API
+├── 05-Plugin  // 自定义插件
 │   ├── C++-UsePluginInside
 │   ├── C++-UsePluginOutside
 │   ├── LoadDataFromNpz
@@ -187,16 +186,16 @@
 │   ├── UsePluginV2DynamicExt
 │   ├── UsePluginV2Ext
 │   └── UsePluginV2IOExt
-├── 06-UseFrameworkTRT  // 框架中使用TensorRT     
+├── 06-UseFrameworkTRT   // 框架中使用TensorRT     
 │   └── Torch-TensorRT
-├── 07-Tool             // 工具
+├── 07-Tool              // 工具
 │   ├── FP16FineTuning   // fp16微调 
 │   ├── Netron           // netron 可视化模型文件  
 │   ├── NetworkInspector // 网络检查器  
 │   │   └── C++
-│   ├── NetworkPrinter  // 网络打印  
-│   ├── NsightSystems   // nsys  
-│   ├── nvtx  // libnvToolsExt.so  https://link.zhihu.com/?target=https%3A//github.com/NVIDIA/NVTX     
+│   ├── NetworkPrinter   // 网络打印  
+│   ├── NsightSystems    // nsys  
+│   ├── nvtx             // 每一段时间对应的是哪一段程序 libnvToolsExt.so  https://link.zhihu.com/?target=https%3A//github.com/NVIDIA/NVTX     
 │   ├── OnnxGraphSurgeon  
 │   │   └── API
 │   ├── Onnxruntime
@@ -210,52 +209,52 @@
 │   │   ├── runExample
 │   │   ├── surgeonExample
 │   │   └── templateExample
-│   ├── trex  // 引擎浏览器    如看 layerinfo 的svg   
+│   ├── trex      // 引擎浏览器    如看 layerinfo 的svg   
 │   │   ├── model
 │   │   ├── trex
 │   │   └── trex.egg-info
-│   └── trtexec // 转换与资源分析工具  
-├── 08-Advance  // 高阶 
-│   ├── BuilderOptimizationLevel       // 构建器优化级别 
+│   └── trtexec  // 转换与资源分析工具，可以轻量化    
+├── 08-Advance   // 高阶 
+│   ├── BuilderOptimizationLevel                   // 构建器优化级别 
 │   ├── CreateExecutionContextWithoutDeviceMemory  // 不使用设备内存构建执行器上下文  
-│   ├── C++StaticCompilation // cpp 静态编译 
-│   ├── CudaGraph     // cuda graph
-│   ├── DataFormat    // 数据格式 ，如 HC/4HW4
-│   ├── DynamicShapeOutput // 输出shape为动态 
-│   ├── EmptyTensor        // 空tensor 
-│   ├── Event              // 事件 
-│   ├── ExternalSource     // 外部源   
+│   ├── C++StaticCompilation      // cpp 静态编译 
+│   ├── CudaGraph                 // cuda graph
+│   ├── DataFormat                // 数据格式 ，如 HC/4HW4
+│   ├── DynamicShapeOutput        // 输出shape为动态 
+│   ├── EmptyTensor               // 空tensor 
+│   ├── Event                     // cuda 事件 
+│   ├── ExternalSource            // 外部源   
 │   ├── HardwareCompatibility     // 硬件兼容性 
 │   ├── LabeledDimension          // 维度被标记
 │   ├── MultiContext              // 多上下文
 │   ├── MultiOptimizationProfile  // 多优化分析配置
-│   ├── MultiStream // 多流
-│   ├── Safety-TODO // 安全性
-│   ├── Sparsity    // 稀疏，如稀疏训练   
+│   ├── MultiStream               // 多流
+│   ├── Safety-TODO               // 安全性 qnx 系统  
+│   ├── Sparsity                  // 稀疏，如稀疏训练   
 │   │   └── pyTorch-ONNX-TensorRT-ASP 
-│   ├── StreamAndAsync   // 流与异步
-│   ├── StrictType       // 严格类型， 如设置部分网络层精度   
-│   ├── TensorRTGraphSurgeon // TensorRT图检查
-│   ├── TorchOperation        // torch算子
-│   └── VersionCompatibility  // 版本兼容性
-├── 09-BestPractice  // 最佳实践，包括图优化
-│   ├── AdjustReduceLayer    // 调整reduce 层
-│   ├── AlignSize            //  对齐尺寸
-│   ├── ComputationInAdvance // 高阶计算
-│   │   └── Convert3DMMTo2DMM  // 3D矩阵乘法到2D矩阵乘法 
-│   ├── ConvertTranposeMultiplicationToConvolution //  转置乘法到卷积
-│   ├── EliminateSqueezeUnsqueezeTranspose // 消除转置中的squeeze/unsqueeze
-│   ├── IncreaseBatchSize  // 增大batch size
-│   ├── UsingMultiOptimizationProfile  // 使用多个优化分析文件  
-│   ├── UsingMultiStream  // 使用多流
-│   └── WorkFlowOnONNXModel  // onnx 工作流
-├── 10-ProblemSolving        // 问题解决中  
-│   ├── ParameterCheckFailed  // 参数检查失败  
-│   ├── SliceNodeWithBoolIO   // slice 层带有bool 量  
+│   ├── StreamAndAsync            // 流与异步
+│   ├── StrictType                // 严格类型， 如设置部分网络层精度   
+│   ├── TensorRTGraphSurgeon      // TensorRT图检查
+│   ├── TorchOperation            // torch算子
+│   └── VersionCompatibility      // 版本兼容性
+├── 09-BestPractice               // 最佳实践，包括图优化
+│   ├── AdjustReduceLayer         // 调整reduce 层
+│   ├── AlignSize                 //  对齐尺寸
+│   ├── ComputationInAdvance      // 高阶计算
+│   │   └── Convert3DMMTo2DMM     // 3D矩阵乘法到2D矩阵乘法 
+│   ├── ConvertTranposeMultiplicationToConvolution     //  转置乘法到卷积
+│   ├── EliminateSqueezeUnsqueezeTranspose             // 消除转置中的squeeze/unsqueeze
+│   ├── IncreaseBatchSize                              // 增大batch size
+│   ├── UsingMultiOptimizationProfile                  // 使用多个优化分析文件  
+│   ├── UsingMultiStream                               // 使用多流
+│   └── WorkFlowOnONNXModel                            // onnx 工作流
+├── 10-ProblemSolving                                  // 问题解决中  
+│   ├── ParameterCheckFailed                           // 参数检查失败  
+│   ├── SliceNodeWithBoolIO                            // slice 层带有bool 量  
 │   ├── WeightsAreNotPermittedSinceTheyAreOfTypeInt32  // 权重类型是INT32
-│   └── WeightsHasCountXButYWasExpected  // 权重数目有误  
+│   └── WeightsHasCountXButYWasExpected                // 权重数目有误  
 ├── 51-Uncategorized
-├── 52-Deprecated  // 废弃的接口  
+├── 52-Deprecated  // 废弃的接口，针对8.4 版本     
 │   ├── BindingEliminate-TRT8
 │   ├── ConcatenationLayerBUG-TRT8.4
 │   ├── ErrorWhenParsePadNode-TRT-8.4
