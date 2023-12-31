@@ -7,7 +7,7 @@
 + 旧的其他TensorRT示例代码，这些代码将在未来逐渐放入食谱中。     
 
 ## 资源     
-+ [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww)，
++ [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww)，提取码: gpq2 
 + 年度中国TensorRT黑客马拉松比赛的文件和信息   
 
  
