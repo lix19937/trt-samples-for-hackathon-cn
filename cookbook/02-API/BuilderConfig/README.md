@@ -152,7 +152,8 @@ print("config.hardware_compatibility_level = %d" % config.hardware_compatibility
 
 # available values:
 #config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.AMPERE_PLUS
-#config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.NONE
+#config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.NONE  
+
 print("config.max_aux_streams = %d" % config.max_aux_streams)
 print("config.plugins_to_serialize =", config.plugins_to_serialize)
 

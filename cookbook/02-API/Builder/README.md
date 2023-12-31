@@ -38,7 +38,9 @@ print("\nEngine build part =====================================================
 print("builder.logger = %s" % builder.logger)
 print("builder.is_network_supported() = %s" % builder.is_network_supported(network, config))
 print("builder.get_plugin_registry().plugin_creator_list =", builder.get_plugin_registry().plugin_creator_list)
-builder.max_threads = 16  # The maximum thread that can be used by the Builder
+builder.max_threads = 16  # The maximum thread that can be used by the Builder 
+
+# 序列化网络  
 engineString = builder.build_serialized_network(network, config)
 
 ```
