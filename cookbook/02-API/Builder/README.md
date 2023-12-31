@@ -1,4 +1,4 @@
-#
+# 构建器  
 
 ## 运行命令  
 
@@ -40,7 +40,7 @@ print("builder.is_network_supported() = %s" % builder.is_network_supported(netwo
 print("builder.get_plugin_registry().plugin_creator_list =", builder.get_plugin_registry().plugin_creator_list)
 builder.max_threads = 16  # The maximum thread that can be used by the Builder 
 
-# 序列化网络  
+# 从网络和config构建序列化引擎  
 engineString = builder.build_serialized_network(network, config)
 
 ```

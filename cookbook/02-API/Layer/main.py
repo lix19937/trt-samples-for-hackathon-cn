@@ -35,6 +35,7 @@ inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 
+# 搭建网络  
 layer = network.add_identity(inputT0)
 layer.name = "Identity Layer"
 layer.metadata = "My message"  # since TensorRT 8.6
@@ -50,6 +51,7 @@ layer.get_output(0).dynamic_range = [-128, 128]
 
 network.mark_output(layer.get_output(0))
 
+# 序列化引擎  
 engineString = builder.build_serialized_network(network, config)
 
 print("layer.name = %s" % layer.name)

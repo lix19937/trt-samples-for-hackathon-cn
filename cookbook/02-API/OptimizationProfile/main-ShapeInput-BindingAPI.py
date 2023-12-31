@@ -26,6 +26,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 构建网络  
 inputT0 = network.add_input("inputT0", trt.float32, [3, 4, 5])
 inputT1 = network.add_input("inputT1", trt.int32, [3])
 profile.set_shape_input(inputT1.name, [1, 1, 1], [3, 4, 5], [5, 5, 5])
@@ -35,11 +36,20 @@ shuffleLayer = network.add_shuffle(inputT0)
 shuffleLayer.set_input(1, inputT1)
 
 network.mark_output(shuffleLayer.get_output(0))
-engineString = builder.build_serialized_network(network, config)
+
+# 序列化引擎 
+engineString = builder.build_serialized_network(network, config) 
+
+# 反序列化 
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
+# tensor 数目
 nIO = engine.num_bindings
+
+# 输入tensor 数目
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 
+# 执行器上下文  
 context = engine.create_execution_context()
 
 def run(shape):
@@ -49,8 +59,10 @@ def run(shape):
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(np.arange(np.prod(shape), dtype=np.float32).reshape(shape)))
-    bufferH.append([])  # placeholder for input shape tensor, we need not to pass input shape tensor to GPU
-    # we can also use a dummy input shape tenor "bufferH.append(np.ascontiguousarray([0],dtype=np.int32))" here to avoid 3 if-condition statments "if engine.is_shape_binding(i)" below
+    # placeholder for input shape tensor, we need not to pass input shape tensor to GPU
+    bufferH.append([])  
+    # we can also use a dummy input shape tenor "bufferH.append(np.ascontiguousarray([0],dtype=np.int32))" 
+    # here to avoid 3 if-condition statments "if engine.is_shape_binding(i)" below
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
     bufferD = []

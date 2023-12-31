@@ -1,6 +1,6 @@
 #
 
-## Introduction
+## 说明  
 
 + Refit-set_weights.py, using set_ Weights API
 
@@ -10,7 +10,7 @@
 
 + Refit-OnnxByWeight.py, use the new weight from the ONNX file, and use the method of saving the weight of the ONNX file and re feeding it to the layer in TensorRT for modification
 
-## Steps to run
+## 运行命令    
 
 ```shell
 python3 Refit-set_weights.py
@@ -20,3 +20,10 @@ python3 Refit-OnnxByWeight.py
 ```
 
 ## Output for reference: ./result-*.log
+
+
+## 说明  
+```python
+
+
+```

@@ -8,8 +8,7 @@
 
 using namespace nvinfer1;
 
-class MyCalibrator : public IInt8EntropyCalibrator2
-{
+class MyCalibrator : public IInt8EntropyCalibrator2 {
 private:
     int                             nCalibration {0};
     int                             nBatchSize {0};

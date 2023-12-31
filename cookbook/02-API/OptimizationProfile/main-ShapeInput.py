@@ -18,14 +18,18 @@ import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-logger = trt.Logger(trt.Logger.ERROR)
+# 构建器
+logger  = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
-config = builder.create_builder_config()
+config  = builder.create_builder_config()
 
+# 构建网络  
 inputT0 = network.add_input("inputT0", trt.float32, [3, 4, 5])
 inputT1 = network.add_input("inputT1", trt.int32, [3])
+
+# 增加分析配置 min opt max shape 
 profile.set_shape_input(inputT1.name, [1, 1, 1], [3, 4, 5], [5, 5, 5])
 print("OptimizationProfile is available? %s" % bool(profile))  # an equivalent API: print(profile.__nonzero__())
 config.add_optimization_profile(profile)
@@ -34,25 +38,36 @@ shuffleLayer = network.add_shuffle(inputT0)
 shuffleLayer.set_input(1, inputT1)
 
 network.mark_output(shuffleLayer.get_output(0))
+
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
+
+# 反序列化
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
+# tensor 数目
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
+# 执行器上下文  
 context = engine.create_execution_context()
 
 def run(shape):
-    context.set_tensor_address(lTensorName[1], np.array(shape, dtype=np.int32).ctypes.data)  # set input shape tensor using CPU buffer
+    # set input shape tensor using CPU buffer
+    context.set_tensor_address(lTensorName[1], np.array(shape, dtype=np.int32).ctypes.data)  
     for i in range(nIO):
-        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), ("ShapeTensor    " if engine.is_shape_inference_io(lTensorName[i]) else "ExecutionTensor"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+        print("[%2d]%s->" 
+            % (i, "Input " if i < nInput else "Output"), ("ShapeTensor    " if engine.is_shape_inference_io(lTensorName[i]) else "ExecutionTensor"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)))
-    bufferH.append([])  # placeholder for input shape tensor, we need not to pass input shape tensor to GPU
+    # placeholder for input shape tensor, we need not to pass input shape tensor to GPU
+    bufferH.append([]) 
     # we can also use a dummy input shape tenor "bufferH.append(np.ascontiguousarray([0],dtype=np.int32))" here to avoid 4 if-condition statments "if engine.is_shape_inference_io(lTensorName[i])" below
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+    
     bufferD = []
     for i in range(nIO):
         if engine.is_shape_inference_io(lTensorName[i]):  # skip input shape tensor
@@ -70,8 +85,10 @@ def run(shape):
             continue
         context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
+    # v3     
     context.execute_async_v3(0)
-
+    
+    # 
     for i in range(nInput, nIO):
         if engine.is_shape_inference_io(lTensorName[i]):  # skip input shape tensor
             continue

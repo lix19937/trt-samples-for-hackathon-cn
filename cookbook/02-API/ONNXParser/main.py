@@ -30,14 +30,15 @@ config = builder.create_builder_config()
 
 os.chdir("/w/gitlab/tensorrt-cookbook/02-API/ONNXParser")
 
+# 解析器
 parser = trt.OnnxParser(network, logger)
 
 # check whether one certain operator is supported by ONNX parser
 print("parser.supports_operator('LayerNormalization') = %s" % parser.supports_operator("LayerNormalization"))
 
-# ?
-print("parser.sget_used_vc_plugin_libraries() = %s" % parser.get_used_vc_plugin_libraries())
+print("parser.get_used_vc_plugin_libraries() = %s" % parser.get_used_vc_plugin_libraries())
 
+# 解析onnx 
 if True:  # four equivalent methods to parse ONNX file
     res = parser.parse_from_file(onnxFile)  # parse from file
 else:
@@ -70,5 +71,6 @@ inputTensor = network.get_input(0)
 profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
 
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
 print("%s building serialized network" % ("Failed" if engineString is None else "Succeeded"))

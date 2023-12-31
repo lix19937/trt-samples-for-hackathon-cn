@@ -29,6 +29,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
+
+# 搭建网络  
 inputT0 = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
 profile.set_shape(inputT0.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
@@ -39,13 +41,19 @@ layer.set_output_type(0, trt.int8)
 layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 layer.get_output(0).dynamic_range = [-128, 128]
 network.mark_output(layer.get_output(0))
+
+# 构建序列化引擎 
 engineString = builder.build_serialized_network(network, config)
+
+# 反序列化  
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # count of input / output tensor
 nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
 
+# 执行器上下文 
 context = engine.create_execution_context()
 
 print("context.__sizeof__() = %d" % context.__sizeof__())
@@ -68,11 +76,16 @@ print("\nInput / Output tensor related =========================================
 print("context.infer_shapes() = %s" % context.infer_shapes())  # get name of tensor which needs set shape/value
 print("context.all_binding_shapes_specified = %s" % context.all_binding_shapes_specified)  # only work for set_binding_shape(), not for set_input_shape()
 print("context.all_shape_inputs_specified = %s" % context.all_shape_inputs_specified)  # only work for set_input_shape(), not for set_shape_input()
+
+# tensor 等同 binding 
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_tensor_shape(lTensorName[i]))
     #print("%s[%2d]->" % ("Input " if i < nInput else "Output", i), context.get_binding_shape(lTensorName[i]))
+
+# 下面两句等价 
 context.set_input_shape(lTensorName[0], shape)
 #context.set_binding_shape(0, shape)
+
 print("context.infer_shapes() = %s" % context.infer_shapes())  # now all input tensors are set
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_tensor_shape(lTensorName[i]), context.get_tensor_strides(lTensorName[i]))
@@ -86,6 +99,7 @@ bufferH = []
 bufferH.append(np.ascontiguousarray(data))
 for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+
 bufferD = []
 for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
@@ -116,6 +130,7 @@ print(bufferH[-1].reshape(np.prod(shape[:3]) * 2, shape[-1] // 2).transpose(1, 0
 
 for buffer in bufferD:
     cudart.cudaFree(buffer)
+
 """
 Member of IExecutionContext:
 ++++        shown above

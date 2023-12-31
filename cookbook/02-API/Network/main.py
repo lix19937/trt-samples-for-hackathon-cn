@@ -24,15 +24,19 @@ data = np.arange(nB * nC * nH * nW, dtype=np.float32).astype(np.float32).reshape
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
+# 构建器
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 
+# 定义一个空网络 
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 #network = builder.create_network((1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION)))  # EXPLICIT_PRECISION is deprecated since TensorRT 8.5
 network.name = "Identity Network"
 
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
+
+# 搭建网络 
 inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)

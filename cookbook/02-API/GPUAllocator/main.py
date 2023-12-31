@@ -24,6 +24,7 @@ shape = [1, 1, 28, 28]
 data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1
 np.random.seed(31193)
 
+# 用户分配显存  必须继承 IGpuAllocator
 class MyGpuAllocator(trt.IGpuAllocator):
 
     def __init__(self):
@@ -42,7 +43,8 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
         self.sizeList.append(size)
         self.addressList.append(adress)
-        self.flagList.append(bool(flag))  # flag == True means the size is flexible (reallocate could be called), this is inconsistent with int(trt.AllocatorFlag.RESIZABLE) == 0
+        # flag == True means the size is flexible (reallocate could be called), this is inconsistent with int(trt.AllocatorFlag.RESIZABLE) == 0
+        self.flagList.append(bool(flag)) 
         return adress
 
     def deallocate(self, adress):
@@ -101,12 +103,14 @@ np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
-builder = trt.Builder(logger)
+builder = trt.Builder(logger) 
+# gpu_allocator 注册到构建器   
 builder.gpu_allocator = MyGpuAllocator()  # assign GPU Allocator to Builder
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 搭建网络  
 inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
 profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
@@ -151,11 +155,17 @@ _16.axes = 1 << 1
 _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
+
+# 构建序列化引擎
 engineString = builder.build_serialized_network(network, config)
 
-runtime = trt.Runtime(logger)
-runtime.gpu_allocator = MyGpuAllocator()  # assign GPU Allocator to Runtime or ExecutionContext
+runtime = trt.Runtime(logger)  
+# gpu_allocator 注册到运行时  
+runtime.gpu_allocator = MyGpuAllocator()  # assign GPU Allocator to Runtime or ExecutionContext 
+
+# 反序列化引擎 
 engine = runtime.deserialize_cuda_engine(engineString)
+
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)

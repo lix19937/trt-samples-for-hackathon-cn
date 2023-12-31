@@ -1,13 +1,28 @@
-#
+# 后量化  
 
-+ Here we provide a template of the Int8 calibrator for TensorRT
++ 使用TensorRT 进行INT8 PTQ  
 
-+ More detailed examples refer to 03-BuildEngineByTensorRTAPI/MNISTExample-pyTorch
++ 更多内容见 03-BuildEngineByTensorRTAPI/MNISTExample-pyTorch
 
-+ Output: result.log
++ 输出: result.log
 
-## Steps to run
+## 运行命令    
 
 ```shell
 python3 main.py
+```
+
+## 说明  
+```python 
+
+IInt8Calibrator
+IInt8LegacyCalibrator     基本废弃 
+IInt8EntropyCalibrator
+IInt8EntropyCalibrator2   最常见  
+IInt8MinMaxCalibrator
+
+见py  https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/index.html  
+
+c++   https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/index.html
+
 ```

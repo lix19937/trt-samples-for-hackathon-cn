@@ -25,9 +25,9 @@ class MyLogger(trt.ILogger):  # customerized Logger
     def log(self, severity, msg):
         if severity <= self.min_severity:
             # int(trt.ILogger.Severity.VERBOSE) == 4
-            # int(trt.ILogger.Severity.INFO) == 3
+            # int(trt.ILogger.Severity.INFO)    == 3
             # int(trt.ILogger.Severity.WARNING) == 2
-            # int(trt.ILogger.Severity.ERROR) == 1
+            # int(trt.ILogger.Severity.ERROR)   == 1
             # int(trt.ILogger.Severity.INTERNAL_ERROR) == 0
             print("My Logger[%s] %s" % (severity, msg))  # customerized log content
 
@@ -38,12 +38,18 @@ logger.min_severity = trt.ILogger.Severity.INFO  # use severity INFO in build ti
 builder = trt.Builder(logger)  # assign logger to Builder
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
+
+# 搭建网络 
 inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
+
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
 
 print("Run time ----------------------------------------------------------------")
-logger.min_severity = trt.ILogger.Severity.VERBOSE  # change severity into VERBOSE in run time
+# 修改日志级别 
+logger.min_severity = trt.ILogger.Severity.VERBOSE  
 
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)  # assign logger to Runtime
+# 运行时注册日志 
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)  

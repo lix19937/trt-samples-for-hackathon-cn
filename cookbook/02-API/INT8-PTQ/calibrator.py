@@ -20,7 +20,9 @@ import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
+# 定义标定器
 
+# IInt8EntropyCalibrator2 用的最广   主要基于此展开 ，其他方法同理 
 class MyInt8EntropyCalibrator2(trt.IInt8EntropyCalibrator2):  # the most common use
 
     def __init__(self, nCalibration, nBatchSize, tensorDictionary, cacheFile):
@@ -107,6 +109,7 @@ class MyInt8Calibrator(trt.IInt8Calibrator):
     def write_calibration_cache(self, cache):  # necessary API
         return
 
+# Legacy 基本废弃  
 class MyInt8LegacyCalibrator(trt.IInt8LegacyCalibrator):
 
     def __init__(self, nCalibration, nBatchSize, tensorDictionary, cacheFile):
@@ -127,6 +130,7 @@ class MyInt8LegacyCalibrator(trt.IInt8LegacyCalibrator):
     def write_calibration_cache(self, cache):  # necessary API
         return
 
+# IInt8EntropyCalibrator 用的少 
 class MyInt8EntropyCalibrator(trt.IInt8EntropyCalibrator):
 
     def __init__(self, nCalibration, nBatchSize, tensorDictionary, cacheFile):
@@ -147,6 +151,7 @@ class MyInt8EntropyCalibrator(trt.IInt8EntropyCalibrator):
     def write_calibration_cache(self, cache):  # necessary API
         return
 
+# IInt8MinMaxCalibrator 用的少 
 class MyInt8MinMaxCalibrator(trt.IInt8MinMaxCalibrator):
 
     def __init__(self, nCalibration, nBatchSize, tensorDictionary, cacheFile):

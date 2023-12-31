@@ -22,6 +22,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 搭建网络 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
 profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 config.add_optimization_profile(profile)
@@ -29,5 +30,8 @@ config.add_optimization_profile(profile)
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
-print(engineString.dtype, engineString.nbytes)  # print inforamtion of the HostMemory
+
+# 打印主机内存信息  
+print(engineString.dtype, engineString.nbytes)  

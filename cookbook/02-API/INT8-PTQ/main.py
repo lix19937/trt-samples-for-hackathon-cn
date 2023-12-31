@@ -30,20 +30,24 @@ np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
+# 构建器 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 注册calibrator 
 tensorDictionary = {}  # build a dictionary to pass information to calibrator
 tensorDictionary["inputT0"] = {"shape": shape[1:], "dataType": trt.float32}  # remove Batch dimension of input tensors to fit the old Calibrator API
 myCalibrator = calibrator.MyInt8EntropyCalibrator2(nCalibration, 1, tensorDictionary, cacheFile)  # use calibrator inherited from trt.IInt8EntropyCalibrator2
 print("myCalibrator.get_algorithm() =", myCalibrator.get_algorithm())  # print the algorithm the calibrator uses
 
-config.set_flag(trt.BuilderFlag.INT8)  # set INT8 mdoe and corresponding Calibrator
+# 注册calibrator - 开启int8 flag
+config.set_flag(trt.BuilderFlag.INT8)  # set INT8 mode and corresponding Calibrator
 config.int8_calibrator = myCalibrator
 
+# 搭建网络  
 inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
 profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
@@ -90,6 +94,7 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
 
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
 
 print("Finish!")

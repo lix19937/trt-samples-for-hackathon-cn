@@ -20,17 +20,14 @@
 
 using namespace nvinfer1;
 
-const int         nH {28};
-const int         nW {28};
+const int         nH {28}, nW {28};
 const std::string trtFile {"./model.plan"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
-const int         nCalibration {10};
-const int         nBatchSize {1};
+const int         nCalibration {10}, nBatchSize {1};
 const std::string cacheFile {"model.INT8Cache"};
 
-int main()
-{
+int main(){
     CHECK(cudaSetDevice(0));
     IBuilder             *builder     = createInferBuilder(gLogger);
     INetworkDefinition   *network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -44,8 +41,7 @@ int main()
     dataTypeMap[std::string("inputT0")] = DataType::kFLOAT;
 
     pCalibrator = new MyCalibrator(nCalibration, nBatchSize, shapeMap, dataTypeMap, cacheFile);
-    if (pCalibrator == nullptr)
-    {
+    if (pCalibrator == nullptr) {
         std::cout << std::string("Failed getting Calibrator for Int8!") << std::endl;
         return 1;
     }
@@ -58,15 +54,14 @@ int main()
     profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {4, {4, 1, nH, nW}});
     config->addOptimizationProfile(profile);
 
-    Weights w;
-    Weights b;
+    // cpp-api  搭建网络  
+    Weights w, b;
     float  *pWeight = new float[64 * 7 * 7 * 1024]; // fake weights
     //memset(pWeight, 0, sizeof(float) * 64 * 7 * 7 * 1024);   // use all 0 weights wiil raise error below in MyCalibrator::writeCalibrationCache
     // ERROR: 2: Assertion getter(i) != 0 failed.
     // ERROR: 2: [weightConvertors.cpp::quantizeBiasCommon::310] Error Code 2: Internal Error (Assertion getter(i) != 0 failed. )
     srand(31193);
-    for (int i = 0; i < 64 * 7 * 7 * 1024; ++i)
-    {
+    for (int i = 0; i < 64 * 7 * 7 * 1024; ++i) {
         pWeight[i] = float(rand()) / RAND_MAX * 2 - 1;
     }
 
@@ -110,10 +105,10 @@ int main()
     auto *_17 = network->addTopK(*_16->getOutput(0), TopKOperation::kMAX, 1, 1U << 1);
 
     network->markOutput(*_17->getOutput(1));
-
+    
+    //  引擎序列化 
     IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
-    if (engineString == nullptr || engineString->size() == 0)
-    {
+    if (engineString == nullptr || engineString->size() == 0) {
         std::cout << "Failed building serialized engine!" << std::endl;
         return 1;
     }

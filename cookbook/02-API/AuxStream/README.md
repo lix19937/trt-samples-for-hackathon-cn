@@ -1,4 +1,4 @@
-#
+# 辅助流  
 
 ## 使用命令   
 
@@ -8,8 +8,7 @@ python3 main.py
 
 ## 说明  
 ```python
-nGEMM = 10
-nMKN = 128
+nGEMM = 10; nMKN = 128
 
 logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
@@ -21,7 +20,7 @@ config = builder.create_builder_config()
 #  最大可辅助流 
 config.max_aux_streams = 2
 
-# 设置 输入维度  
+# 设置 输入维度  batch为动态的 
 inputList = []
 for i in range(nGEMM + 1):
     inputT = network.add_input("inputT" + str(i), trt.float32, [-1, 4, nMKN, nMKN])
@@ -29,6 +28,7 @@ for i in range(nGEMM + 1):
     inputList.append(inputT)
 config.add_optimization_profile(profile)
 
+# 搭建网络  
 tempTensor0 = inputList[0]
 tempTensor1 = inputList[0]
 for i in range(1, nGEMM + 1):
@@ -38,14 +38,14 @@ for i in range(1, nGEMM + 1):
     tempLayer1 = network.add_matrix_multiply(tempTensor1, trt.MatrixOperation.NONE, inputList[nGEMM + 1 - i], trt.MatrixOperation.NONE)
     tempTensor1 = tempLayer1.get_output(0)
 
-# 标记网络输出
+# 搭建网络 - 标记网络输出
 network.mark_output(tempTensor0)
 network.mark_output(tempTensor1)
 
-# 构建序列化引擎  
+# 从网络和config构建序列化引擎  
 engineString = builder.build_serialized_network(network, config)
 
-# 反序列化  
+# 反序列化引擎   
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 # tensor 数目  
@@ -53,17 +53,24 @@ nIO = engine.num_io_tensors
 
 # tensor 名称 
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+
+# 输入tensor的数目 
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 # 输出 引擎可辅助流数目   
 print("Engine.num_aux_streams=%d" % engine.num_aux_streams)
 
-# 创建上下文 
-context = engine.create_execution_context()
+# 创建执行器上下文 
+context = engine.create_execution_context() 
+
+# 设置输入shape  
 for i in range(nInput):
     context.set_input_shape(lTensorName[i], [4, 4, nMKN, nMKN])
+
+# 打印输入输出tensor的shape,名称     
 for i in range(nIO):
-    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), 
+        engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
  # optional, TensorRT will create residual cudaStream besides we assign to context
 context.set_aux_streams([cudart.cudaStreamCreate()[1] for i in range(max(1, engine.num_aux_streams))]) 

@@ -25,7 +25,8 @@ static Logger     gLogger(ILogger::Severity::kERROR);
 void run()
 {
     ICudaEngine *engine = nullptr;
-
+    
+    // 如果有plan 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
         std::ifstream engineFile(trtFile, std::ios::binary);
@@ -52,7 +53,7 @@ void run()
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else
+    else // 搭建网络 
     {
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -99,19 +100,18 @@ void run()
         }
         std::cout << "Succeeded saving .plan file!" << std::endl;
     }
-
+    
+    // 创建执行器上下文  
     IExecutionContext *context = engine->createExecutionContext();
     context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
     int nBinding = engine->getNbBindings();
     int nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         nInput += int(engine->bindingIsInput(i));
     }
     int nOutput = nBinding - nInput;
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         std::cout << std::string("Bind[") << i << std::string(i < nInput ? "]:i[" : "]:o[") << (i < nInput ? i : i - nInput) << std::string("]->");
         std::cout << dataTypeToString(engine->getBindingDataType(i)) << std::string(" ");
         std::cout << shapeToString(context->getBindingDimensions(i)) << std::string(" ");
@@ -119,8 +119,7 @@ void run()
     }
 
     std::vector<int> vBindingSize(nBinding, 0);
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         Dims32 dim  = context->getBindingDimensions(i);
         int    size = 1;
         for (int j = 0; j < dim.nbDims; ++j)
@@ -131,32 +130,30 @@ void run()
     }
 
     std::vector<void *> vBufferH {nBinding, nullptr};
+    // 设备指针 
     std::vector<void *> vBufferD {nBinding, nullptr};
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
         CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
-    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i)
-    {
+    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i) {
         pData[i] = float(i);
     }
 
     int  inputSize = 3 * 4 * 5, outputSize = 1;
     Dims outputShape = context->getBindingDimensions(1);
-    for (int i = 0; i < outputShape.nbDims; ++i)
-    {
+    for (int i = 0; i < outputShape.nbDims; ++i) {
         outputSize *= outputShape.d[i];
     }
     std::vector<float>  inputH0(inputSize, 1.0f);
     std::vector<float>  outputH0(outputSize, 0.0f);
+    // bindings 指针buff
     std::vector<void *> binding = {nullptr, nullptr};
     CHECK(cudaMalloc(&binding[0], sizeof(float) * inputSize));
     CHECK(cudaMalloc(&binding[1], sizeof(float) * outputSize));
-    for (int i = 0; i < inputSize; ++i)
-    {
+    for (int i = 0; i < inputSize; ++i) {
         inputH0[i] = (float)i;
     }
 
@@ -164,22 +161,21 @@ void run()
     cudaStream_t stream;
     CHECK(cudaStreamCreate(&stream));
 
-    // 捕获 CUDA Graph 之前要运行一次推理，https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_execution_context.html#a2f4429652736e8ef6e19f433400108c7
-    for (int i = 0; i < nInput; ++i)
-    {
+    // 捕获 CUDA Graph 之前要运行一次推理
+    // https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_execution_context.html#a2f4429652736e8ef6e19f433400108c7
+    for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
-
+    
+    // TRT8510 支持V3
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
-    for (int i = nInput; i < nBinding; ++i)
-    {
+    for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     cudaStreamSynchronize(stream); // 不用在 graph 内同步
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
@@ -187,21 +183,19 @@ void run()
     cudaGraph_t     graph;
     cudaGraphExec_t graphExec = nullptr;
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
-    for (int i = 0; i < nInput; ++i)
-    {
+    for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
-    for (int i = nInput; i < nBinding; ++i)
-    {
+    for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
-    //cudaStreamSynchronize(stream); // 不用在 graph 内同步
     cudaStreamEndCapture(stream, &graph);
     cudaGraphInstantiate(&graphExec, graph, nullptr, nullptr, 0);
 
+    //----------------------------------------------------------------------
     cudaGraphLaunch(graphExec, stream);
     cudaStreamSynchronize(stream);
 
@@ -209,48 +203,40 @@ void run()
     context->setBindingDimensions(0, Dims32 {3, {2, 3, 4}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         Dims32 dim  = context->getBindingDimensions(i);
         int    size = 1;
-        for (int j = 0; j < dim.nbDims; ++j)
-        {
+        for (int j = 0; j < dim.nbDims; ++j){
             size *= dim.d[j];
         }
         vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
     }
 
     // 这里偷懒，因为本次推理绑定的输入输出数据形状不大于上一次推理，所以这里不再重新准备所有 buffer
-
-    for (int i = 0; i < nInput; ++i)
-    {
+    for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
-    for (int i = nInput; i < nBinding; ++i)
-    {
+    for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     cudaStreamSynchronize(stream); // 不用在 graph 内同步
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
     // 再次捕获 CUDA Graph 并运行推理
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
-    for (int i = 0; i < nInput; ++i)
-    {
+    for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
-    for (int i = nInput; i < nBinding; ++i)
-    {
+    for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     //cudaStreamSynchronize(stream); // 不用在 graph 内同步
@@ -262,16 +248,14 @@ void run()
 
     cudaStreamDestroy(stream);
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         delete[] vBufferH[i];
         CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
-int main()
-{
+int main(){
     CHECK(cudaSetDevice(0));
     run();
     run();

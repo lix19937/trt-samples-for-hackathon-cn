@@ -1,4 +1,4 @@
-#
+# 构建器配置 
 
 ## 运行命令
 
@@ -77,14 +77,20 @@ network.mark_output(identityLayer.get_output(0))
 print("config.__sizeof__() = %d" % config.__sizeof__())
 print("config.__str__() = %s" % config.__str__())
 
+# 引擎兼容性  
+# https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/infer/Core/BuilderConfig.html#tensorrt.EngineCapability 
+# default(STANDARD) without targeting safety runtime, supporting GPU and DLA
 print("\nDevice type part ======================================================")
-config.engine_capability = trt.EngineCapability.STANDARD  # default without targeting safety runtime, supporting GPU and DLA
+config.engine_capability = trt.EngineCapability.STANDARD  
 print("config.engine_capability = %s" % config.engine_capability)
 
 print("config.default_device_type = %s" % config.default_device_type)
 print("config.DLA_core = %d" % config.DLA_core)
+
+# 判断layer 是否可以在DLA 运行 
 print("config.can_run_on_DLA(identityLayer) = %s" % config.can_run_on_DLA(identityLayer))
 
+# 设置运行后端为DLA 
 print("Set device type of certain layer ----------------------------------------")
 config.set_device_type(identityLayer, trt.DeviceType.DLA)  # device type: [trt.DeviceType.GPU, trt.DeviceType.DLA]
 print("config.get_device_type(identityLayer) = %s" % config.get_device_type(identityLayer))  # offload one layer running on certain device
@@ -94,8 +100,9 @@ print("Reset device type of certain layer to default ---------------------------
 config.reset_device_type(identityLayer)
 print("config.get_device_type(identityLayer) = %s" % config.get_device_type(identityLayer))
 
+# check all flags, when running TensorRT on Ampere above, TF32 (1<<7) is set as default
 print("\nFlag part =============================================================")
-print("config.flags = %d" % config.flags)  # check all flags, when running TensorRT on Ampere above, TF32 (1<<7) is set as default
+print("config.flags = %d" % config.flags)  
 printFlagFromBit(config.flags)
 
 print("Set Flag FP16 -----------------------------------------------------------")
@@ -157,5 +164,6 @@ print("config.hardware_compatibility_level = %d" % config.hardware_compatibility
 print("config.max_aux_streams = %d" % config.max_aux_streams)
 print("config.plugins_to_serialize =", config.plugins_to_serialize)
 
+# 从网络和config构建序列化引擎  
 engineString = builder.build_serialized_network(network, config)
 ```

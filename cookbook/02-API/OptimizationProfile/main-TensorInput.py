@@ -24,6 +24,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 搭建网络 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
 profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 print("OptimizationProfile is available? %s" % bool(profile))  # an equivalent API: print(profile.__nonzero__())
@@ -32,8 +33,12 @@ config.add_optimization_profile(profile)
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 
+# 序列化引擎
 engineString = builder.build_serialized_network(network, config)
+
+# 反序列化 
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
