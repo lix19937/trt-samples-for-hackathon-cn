@@ -24,7 +24,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
-# 搭建网络 
+# 搭建网络  CHW 为动态的  
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
 profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 print("OptimizationProfile is available? %s" % bool(profile))  # an equivalent API: print(profile.__nonzero__())
@@ -43,18 +43,23 @@ nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
+# 执行器上下文 
 context = engine.create_execution_context()
 
 def run(shape):
     context.set_input_shape(lTensorName[0], shape)
 
     for i in range(nIO):
-        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"),  
+            engine.get_tensor_dtype(lTensorName[i]), 
+            engine.get_tensor_shape(lTensorName[i]), 
+            context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(np.arange(np.prod(shape), dtype=np.float32).reshape(shape)))
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+    
     bufferD = []
     for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])

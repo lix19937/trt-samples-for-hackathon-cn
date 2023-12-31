@@ -11,7 +11,7 @@
   + [0]: (nBatchSize, nLengthA * nLengthB)          float32, outer product A and B per batch
   + [1]: (nBatchSize, 1, min(nLengthA, nLengthB))   float32, elementwise sum of A and B, just keep the length of the shorter one
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

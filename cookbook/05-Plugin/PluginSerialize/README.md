@@ -1,6 +1,6 @@
 # Plugin serialization
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

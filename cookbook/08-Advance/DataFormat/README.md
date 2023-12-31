@@ -1,6 +1,6 @@
 # Use PluginV2DynamicExt
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

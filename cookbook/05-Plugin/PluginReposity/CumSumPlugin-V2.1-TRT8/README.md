@@ -6,4 +6,4 @@
     - [0]: axis                         int32, axis >=0 && axis <= K, the axis the sum executes
 + Output tensor:
     - [0]: (nBatchSize, n1, n2, ...,nK) float32/float16/int32
-+ Steps to run：`make test`
++ 运行命令  ：`make test`

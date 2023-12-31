@@ -20,4 +20,4 @@
   + [2]: (nRetainSize, nKeepTopK)                     float32,    score of output box
   + [3]: (nRetainSize, nKeepTopK)                     float32,    kind index of output box
 
-+ Steps to run：`make test`
++ 运行命令  ：`make test`

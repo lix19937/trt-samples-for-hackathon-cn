@@ -1,6 +1,6 @@
-#
+# 量化感知训练  
 
-## Steps to run
+## 运行命令  
 
 ```shell
 python3 main.py

@@ -2,7 +2,7 @@
 
 + Implicit batch mode and binding APIs are used
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

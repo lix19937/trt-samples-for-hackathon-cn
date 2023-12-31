@@ -8,7 +8,7 @@ import tensorrt as trt
 from cuda import cudart
 from tqdm import tqdm
 
-os.chdir("/w/gitlab/tensorrt-cookbook/08-Tool/FP16FineTuning")  # fro debug
+os.chdir("/w/gitlab/tensorrt-cookbook/08-Tool/FP16FineTuning")  # for debug
 
 # Customized variable ----------------------------------------------------------
 onnxFile = "model.onnx"  # required
@@ -129,6 +129,7 @@ def run(bFP32, layerNameListInFP32=[]):
     bufferH = []
     for i in range(nInput):
         bufferH.append(np.ascontiguousarray(dataMap[lTensorName[i]]))
+        
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []

@@ -6,4 +6,4 @@
     - [0]: nEmbedding                               int32, One Hot 输出编码宽度
 + Output tensor:
     - [0]: (nBatchSize, n1, n2, ...,nK, nEmbedding) float32/float16
-+ Steps to run：`make test`
++ 运行命令  ：`make test`

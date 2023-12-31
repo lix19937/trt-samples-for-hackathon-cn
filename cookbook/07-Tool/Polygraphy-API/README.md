@@ -1,6 +1,6 @@
 #
 
-## Steps to run
+## 运行命令  
 
 ```shell
 python3 getOnnxModel.py

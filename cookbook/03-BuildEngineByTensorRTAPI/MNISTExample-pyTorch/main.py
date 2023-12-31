@@ -139,9 +139,10 @@ config = builder.create_builder_config()
 if bUseFP16Mode:
     config.set_flag(trt.BuilderFlag.FP16)
 if bUseINT8Mode:
+# 注册calibrator - 开启int8 flag
     config.set_flag(trt.BuilderFlag.INT8)
     config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
-
+# 搭建网络  
 inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
 profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
 config.add_optimization_profile(profile)
@@ -189,6 +190,7 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
 
+# 序列化引擎 
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building engine!")

@@ -2,7 +2,7 @@
 
 + Use NVIDIA®Tools Extension SDK to add mark in timeline of Nsight systems.
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

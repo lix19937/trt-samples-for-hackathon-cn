@@ -7,7 +7,7 @@
 + Output tensor:
     - [0]: (nBatchSize, nRow)           int32,
     - [1]: (nBatchSize, nRow)           float32/float16
-+ Steps to run：`make test`
++ 运行命令  ：`make test`
 
 
 # Result:

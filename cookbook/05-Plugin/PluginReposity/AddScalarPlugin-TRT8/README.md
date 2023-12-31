@@ -7,4 +7,4 @@
   + [0]: scalar                       int32,
 + Output tensor:
   + [0]: (nBatchSize, n1, n2, ...,nK) float32/float16
-+ Steps to run: `make test`
++ 运行命令  : `make test`

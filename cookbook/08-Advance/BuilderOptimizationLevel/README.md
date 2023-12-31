@@ -2,7 +2,7 @@
 
 + The example code create a hardware-compatibility TensorRT engine which can run on Ampere or above GPUs
 
-## Steps to run
+## 运行命令  
 
 ```shell
 python main.py

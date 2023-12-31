@@ -1,6 +1,6 @@
-#
+# 浮点训练 + 训练后量化    
 
-## Steps to run
+## 运行命令  
 
 ```shell
 python3 main.py
@@ -8,4 +8,4 @@ cd C++
 make test
 ```
 
-## Output for reference: result.log and C++/result.log
+## 输出参考: result.log and C++/result.log

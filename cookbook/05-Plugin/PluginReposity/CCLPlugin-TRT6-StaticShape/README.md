@@ -13,7 +13,7 @@
     - [0]: (nBatchSize,nHeight,nWidth)      int32,
     - [1]: (nBatchSize,)                    int32,
 
-# Steps to run
+# 运行命令  
 ```shell
 make
 

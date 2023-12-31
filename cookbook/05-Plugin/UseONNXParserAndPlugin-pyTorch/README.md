@@ -1,6 +1,6 @@
 # Use ONNX Parser and Plugin in pyTorch
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

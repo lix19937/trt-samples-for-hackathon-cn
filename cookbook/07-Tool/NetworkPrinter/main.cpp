@@ -22,8 +22,7 @@ using namespace nvinfer1;
 const std::string trtFile {"./model.plan"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
-int main()
-{
+int main(){
     CHECK(cudaSetDevice(0));
     IBuilder             *builder = createInferBuilder(gLogger);
     INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -88,17 +87,14 @@ int main()
 
     network->markOutput(*_17->getOutput(1));
 
-    for (int i = 0; i < network->getNbLayers(); ++i)
-    {
+    for (int i = 0; i < network->getNbLayers(); ++i) {
         ILayer *layer = network->getLayer(i);
         std::cout << std::setw(4) << i << std::string("->") << layerTypeToString(layer->getType()) << std::string(",in=") << layer->getNbInputs() << std::string(",out=") << layer->getNbOutputs() << std::string(",") << std::string(layer->getName()) << std::endl;
-        for (int j = 0; j < layer->getNbInputs(); ++j)
-        {
+        for (int j = 0; j < layer->getNbInputs(); ++j) {
             ITensor *tensor = layer->getInput(j);
             std::cout << std::string("\tInput  ") << std::setw(2) << j << std::string(":") << shapeToString(tensor->getDimensions()) << std::string(",") << dataTypeToString(tensor->getType()) << std::string(",") << std ::string(tensor->getName()) << std::endl;
         }
-        for (int j = 0; j < layer->getNbOutputs(); ++j)
-        {
+        for (int j = 0; j < layer->getNbOutputs(); ++j) {
             ITensor *tensor = layer->getOutput(j);
             std::cout << std::string("\tOutput ") << std::setw(2) << j << std::string(":") << shapeToString(tensor->getDimensions()) << std::string(",") << dataTypeToString(tensor->getType()) << std::string(",") << std ::string(tensor->getName()) << std::endl;
         }

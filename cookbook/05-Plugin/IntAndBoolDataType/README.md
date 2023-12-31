@@ -10,7 +10,7 @@
 + Output tensor:
   + [0]: (nBatchSize, nLength)        float32, elementwise multiplication of the inputs
 
-## Steps to run
+## 运行命令  
 
 ```shell
 make test

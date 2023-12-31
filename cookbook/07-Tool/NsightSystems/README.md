@@ -1,14 +1,14 @@
 #
 
-## Steps to run
+## 运行命令  
 
 ```shell
 ./command.sh
 ```
 
-+ Output for reference: ./NsightSystems/MNISTModel.qdrep or ./NsightSystems/MNISTModel.nsys-rep
++ 输出参考: ./NsightSystems/MNISTModel.qdrep or ./NsightSystems/MNISTModel.nsys-rep
 
-+ Open nsys-ui
++ 打开 nsys-ui
 
 ```shell
 /usr/local/cuda/Nsight*/bin/nsys-ui

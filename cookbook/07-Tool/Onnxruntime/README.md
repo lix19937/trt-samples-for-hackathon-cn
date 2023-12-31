@@ -6,7 +6,7 @@
 
 + Document [Link](https://onnxruntime.ai/)
 
-## Steps to run
+## 运行命令  
 
 ```shell
 python getOnnxModel.py

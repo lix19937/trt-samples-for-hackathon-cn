@@ -1,3 +1,6 @@
+//
+// lix19937 
+//
 #include "calibrator.h"
 
 using namespace nvinfer1;
@@ -45,6 +48,7 @@ bool MyCalibrator::getBatch(void *bindings[], char const *names[], int32_t nbBin
     if (iBatch < nBatch)
     {
         cudaMemcpy(bufferD, &pData[iBatch * nElement], bufferSize, cudaMemcpyHostToDevice);
+        // Ç³¿½±´  
         bindings[0] = bufferD;
         iBatch++;
         return true;
@@ -59,14 +63,14 @@ void const *MyCalibrator::readCalibrationCache(std::size_t &length) noexcept
 {
     std::fstream f;
     f.open(cacheFile, std::fstream::in);
-    if (f.fail())
-    {
-        std::cout << "Failed finding cache file!" << std::endl;
+    if (f.fail()) {
+        std::cout << "Failed finding " << cacheFile << std::endl;
         return nullptr;
     }
+
+    std::cout << "Succeeded finding " << cacheFile << std::endl;
     char *ptr = new char[length];
-    if (f.is_open())
-    {
+    if (f.is_open()) {
         f >> ptr;
     }
     return ptr;
@@ -75,15 +79,13 @@ void const *MyCalibrator::readCalibrationCache(std::size_t &length) noexcept
 void MyCalibrator::writeCalibrationCache(void const *ptr, std::size_t length) noexcept
 {
     std::ofstream f(cacheFile, std::ios::binary);
-    if (f.fail())
-    {
-        std::cout << "Failed opening cache file to write!" << std::endl;
+    if (f.fail()) {
+        std::cout << "Failed opening " << cacheFile << " to write" << std::endl;
         return;
     }
     f.write(static_cast<char const *>(ptr), length);
-    if (f.fail())
-    {
-        std::cout << "Failed saving cache file!" << std::endl;
+    if (f.fail()) {
+        std::cout << "Failed saving " << cacheFile << std::endl;
         return;
     }
     f.close();
