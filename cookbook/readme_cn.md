@@ -1,6 +1,6 @@
 `以下内容来自 lix19937 梳理精简，版权归属 NVIDIA `     
 
-# TensorRT 菜谱精选      
+# TensorRT 食谱精讲          
 
 ## 目录  
 
