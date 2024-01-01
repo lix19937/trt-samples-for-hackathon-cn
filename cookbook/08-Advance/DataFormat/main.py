@@ -129,9 +129,11 @@ def run(shape, dataType, format):
 
     # NC/2HW2
     elif dataType == trt.DataType.HALF and format == trt.TensorFormat.CHW2:
+        # C 能整除2  
         if shape[1] % 2 == 0:  # no pad
             check(bufferH[1], bufferH[0].reshape(shape[0], shape[1] // 2, 2, shape[2], shape[3]).transpose(0, 1, 3, 4, 2).reshape(shape), weak=True)
             check(bufferH[0], bufferH[1].reshape(shape[0], shape[1] // 2, shape[2], shape[3], 2).transpose(0, 1, 4, 2, 3).reshape(shape), weak=True)
+        # C 不能整除2   注意这里容易出错   
         else:  # need pad, this path is also correct when shape[1] % 2 == 0, but seems much more complex
             nTile = (shape[1] + 2 - 1) // 2
             nPadC = nTile * 2
