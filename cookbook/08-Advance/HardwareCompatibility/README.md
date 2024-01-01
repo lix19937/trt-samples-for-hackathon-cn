@@ -1,10 +1,10 @@
 #
 
-## Introduction
+## 说明  
 
-+ The example code create a hardware-compatibility TensorRT engine which can run on Ampere or above GPUs
++ 示例代码创建了一个硬件兼容性TensorRT引擎，该引擎可以在Ampere或更高版本的GPU上运行    
 
-## Result
+## 结果   
 
 + I tested the script in several scenarios:
   + Build engine on A100 GPU without hardware-compatibility, run on A100 GPU: 4.13489 ms (GPU compute time by trtexec)
