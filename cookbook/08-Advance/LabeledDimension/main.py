@@ -57,6 +57,7 @@ context = engine.create_execution_context()
 context.set_binding_shape(0, [4, 1, 1])  # two input tensor with the same head dimension
 context.set_binding_shape(1, [4, 1])
 print("Binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
+
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 
