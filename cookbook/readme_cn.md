@@ -55,7 +55,7 @@
 ## 仓库目录树  
 
 ```txt
-├── 00-MNISTData
+├── 00-MNISTData   // 实例中使用的数据集    
 │   ├── test
 │   └── train
 ├── 01-SimpleDemo  // 完整的使用示例   
