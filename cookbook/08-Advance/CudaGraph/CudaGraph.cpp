@@ -53,7 +53,7 @@ void run()
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else // 搭建网络 
+    else // 无plan，搭建网络 
     {
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -101,7 +101,7 @@ void run()
         std::cout << "Succeeded saving .plan file!" << std::endl;
     }
     
-    // 创建执行器上下文  
+    // 创建执行器上下文 （TRT管理引擎所需的gpu内存）  
     IExecutionContext *context = engine->createExecutionContext();
     context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
@@ -222,7 +222,7 @@ void run()
     for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
-    cudaStreamSynchronize(stream); // 不用在 graph 内同步
+    cudaStreamSynchronize(stream); // 注意，不用在 graph 内同步
 
     for (int i = 0; i < nBinding; ++i) {
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
@@ -239,7 +239,7 @@ void run()
     for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
-    //cudaStreamSynchronize(stream); // 不用在 graph 内同步
+    //cudaStreamSynchronize(stream); // 注意，不用在 graph 内同步
     cudaStreamEndCapture(stream, &graph);
     cudaGraphInstantiate(&graphExec, graph, nullptr, nullptr, 0);
 
