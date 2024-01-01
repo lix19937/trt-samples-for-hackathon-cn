@@ -65,6 +65,7 @@ def run(shape, dataType, format):
     if dataType == trt.DataType.HALF and format in [trt.TensorFormat.CDHW32, trt.TensorFormat.DHWC8]:
         nDim = 5
 
+    # 搭建网络   
     inputT0 = network.add_input("inputT0", dataType, [-1] * nDim)
     inputT0.allowed_formats = 1 << int(trt.TensorFormat.LINEAR)
     if dataType == trt.DataType.INT8:
@@ -78,17 +79,22 @@ def run(shape, dataType, format):
     identityLayer.get_output(0).allowed_formats = 1 << int(format)
 
     network.mark_output(identityLayer.get_output(0))
+
+    # 序列化引擎  
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:
         print("Failed building engine!")
         return
     print("Succeeded building engine!")
+
+    # 反序列化 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     nIO = engine.num_io_tensors
     lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
+    # 执行器上下文 
     context = engine.create_execution_context()
     context.set_input_shape(lTensorName[0], shape)
     #for i in range(nIO):
@@ -116,11 +122,12 @@ def run(shape, dataType, format):
     #print("Input: \n", bufferH[0])
     #print("Output:\n", bufferH[1])
 
-    # check correctness manually
+    # check correctness manually   NCHW 
     if dataType == trt.DataType.FLOAT and format == trt.TensorFormat.LINEAR:
         check(bufferH[1], bufferH[0], weak=True)
         check(bufferH[0], bufferH[1], weak=True)
 
+    # NC/2HW2
     elif dataType == trt.DataType.HALF and format == trt.TensorFormat.CHW2:
         if shape[1] % 2 == 0:  # no pad
             check(bufferH[1], bufferH[0].reshape(shape[0], shape[1] // 2, 2, shape[2], shape[3]).transpose(0, 1, 3, 4, 2).reshape(shape), weak=True)
