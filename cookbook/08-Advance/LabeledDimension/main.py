@@ -21,7 +21,9 @@ import tensorrt as trt
 
 onnxFile = "./model.onnx"
 # Create a ONNX graph with Onnx Graphsurgeon
-# The first dimension of the two input tensors are both called "B", but the computation of the two tensors is independent of each other. Theoretically, the unequal first dimension of the two input tensors does not affect the computation
+# The first dimension of the two input tensors are both called "B", 
+# but the computation of the two tensors is independent of each other. 
+# Theoretically, the unequal first dimension of the two input tensors does not affect the computation
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 1, 1])
 tensor1 = gs.Variable("tensor1", np.float32, ["B", 1])
 tensor2 = gs.Variable("tensor2", np.float32, None)
@@ -50,17 +52,22 @@ config.add_optimization_profile(profile)
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 context = engine.create_execution_context()
+
+# 实验一  
 context.set_binding_shape(0, [4, 1, 1])  # two input tensor with the same head dimension
 context.set_binding_shape(1, [4, 1])
 print("Binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
+
 for i in range(engine.num_bindings):
     print("Bind[%2d]:i[%d]->" % (i, i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
+# 实验二  
 context.set_binding_shape(0, [4, 1, 1])  # two input tensor with different head dimension
 context.set_binding_shape(1, [5, 1])
 print("Binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
+
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 for i in range(engine.num_bindings):
