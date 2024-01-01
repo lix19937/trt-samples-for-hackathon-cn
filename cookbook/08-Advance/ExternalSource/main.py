@@ -27,14 +27,19 @@ np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
+# 构建器  网络  config  
 logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
+
+# https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_builder_config.html#a2475bf03b3fcef9789a5c66b56a7e967
+# 这里是关键  允许启用或禁用当前版本中默认未启用的实验功能    
 config.set_preview_feature(trt.PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805, True)  # default value is True since TensorRT 8.6
 #config.set_preview_feature(trt.PreviewFeature.DISABLE_EXTERNAL_TACTIC_SOURCES_FOR_CORE_0805, False)  # we can comapre the VERBOSE log and performance after turning off this switch
 
+# 搭建网络    batch为动态  
 inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
 profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
 config.add_optimization_profile(profile)
@@ -80,12 +85,17 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
 
+# 序列化引擎  
 engineString = builder.build_serialized_network(network, config)
+
+# 反序列化  
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
+# 执行器上下文  
 context = engine.create_execution_context()
 context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
 for i in range(nIO):
