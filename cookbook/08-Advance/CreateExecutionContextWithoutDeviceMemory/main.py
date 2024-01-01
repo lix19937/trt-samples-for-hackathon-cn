@@ -35,6 +35,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
+# 搭建网络  
 inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
@@ -79,16 +80,27 @@ _16.axes = 1 << 1
 _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
+
+# 序列化引擎  
 engineString = builder.build_serialized_network(network, config)
 
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+# 反序列化   
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)   
+
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-context = engine.create_execution_context_without_device_memory()  # do not alloc GPU memory when creating the context
+# 不开辟gpu 内存创建执行器上下文   
+context = engine.create_execution_context_without_device_memory()  # do not alloc GPU memory when creating the context  
+
+# 显示设备内存需要的尺寸  
 print("Device memory needed by engine is %d byte" % engine.device_memory_size)
-status, address = cudart.cudaMalloc(engine.device_memory_size)  # alloc GPU memory by ourselves
+
+# 用户分配gpu 内存 
+status, address = cudart.cudaMalloc(engine.device_memory_size)   
+
+# 传首地址   
 context.device_memory = address  # assign the address to the context
 
 context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
