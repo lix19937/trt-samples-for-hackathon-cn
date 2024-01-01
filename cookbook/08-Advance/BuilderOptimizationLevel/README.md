@@ -43,3 +43,5 @@ Time of building: 254460.420299ms
 Time of inference: 16.055930ms
 Test <Level=5> finish!
 ```
+
+https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_builder_config.html#af51d2c96a3dcc98c345141ff93562e42      
