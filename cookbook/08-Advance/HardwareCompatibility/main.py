@@ -22,6 +22,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
+
+# 这里是关键点  
 config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.AMPERE_PLUS  # turn on the switch of hardware compatibility, no other work needed
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, 1024, 64])  # I write a "complex" network to see the performance differences between GPUs
