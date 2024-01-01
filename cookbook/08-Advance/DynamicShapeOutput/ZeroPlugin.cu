@@ -58,7 +58,7 @@ int32_t ZeroPlugin::getNbOutputs() const noexcept{
 
 DataType ZeroPlugin::getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept{
     WHERE_AM_I();
-    return inputTypes[0]; // 和第一个输入类型保持一致   
+    return inputTypes[0]; // 和第1个输入类型保持一致   
 }
 
 DimsExprs ZeroPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept{
@@ -97,7 +97,6 @@ bool ZeroPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *
 
 void ZeroPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept{
     WHERE_AM_I();
-    return;
 }
 
 size_t ZeroPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept{
@@ -105,8 +104,7 @@ size_t ZeroPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbIn
     return 0;
 }
 
-int32_t ZeroPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
-{
+int32_t ZeroPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept{
     WHERE_AM_I();
     int nElement = 1;
     for (int i = 0; i < inputDesc[0].dims.nbDims - 1; ++i){
@@ -119,7 +117,6 @@ int32_t ZeroPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTenso
 void ZeroPlugin::destroy() noexcept{
     WHERE_AM_I();
     delete this;
-    return;
 }
 
 int32_t ZeroPlugin::initialize() noexcept{
@@ -129,7 +126,6 @@ int32_t ZeroPlugin::initialize() noexcept{
 
 void ZeroPlugin::terminate() noexcept{
     WHERE_AM_I();
-    return;
 }
 
 size_t ZeroPlugin::getSerializationSize() const noexcept{
@@ -139,13 +135,11 @@ size_t ZeroPlugin::getSerializationSize() const noexcept{
 
 void ZeroPlugin::serialize(void *buffer) const noexcept{
     WHERE_AM_I();
-    return;
 }
 
 void ZeroPlugin::setPluginNamespace(const char *pluginNamespace) noexcept{
     WHERE_AM_I();
     namespace_ = pluginNamespace;
-    return;
 }
 
 const char *ZeroPlugin::getPluginNamespace() const noexcept{
@@ -165,12 +159,10 @@ const char *ZeroPlugin::getPluginVersion() const noexcept{
 
 void ZeroPlugin::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept{
     WHERE_AM_I();
-    return;
 }
 
 void ZeroPlugin::detachFromContext() noexcept{
     WHERE_AM_I();
-    return;
 }
 
 // class ZeroPluginCreator
@@ -205,7 +197,6 @@ IPluginV2DynamicExt *ZeroPluginCreator::deserializePlugin(const char *name, cons
 void ZeroPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept{
     WHERE_AM_I();
     namespace_ = pluginNamespace;
-    return;
 }
 
 const char *ZeroPluginCreator::getPluginNamespace() const noexcept{
@@ -223,8 +214,7 @@ const char *ZeroPluginCreator::getPluginVersion() const noexcept{
     return PLUGIN_VERSION;
 }
 
-const PluginFieldCollection *ZeroPluginCreator::getFieldNames() noexcept
-{
+const PluginFieldCollection *ZeroPluginCreator::getFieldNames() noexcept{
     WHERE_AM_I();
     return &fc_;
 }
