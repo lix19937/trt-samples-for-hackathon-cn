@@ -26,6 +26,7 @@ void run()
 {
     ICudaEngine *engine = nullptr;
 
+    // 有plan  
     if (access(trtFile.c_str(), F_OK) == 0)
     {
         std::ifstream engineFile(trtFile, std::ios::binary);
@@ -52,6 +53,7 @@ void run()
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
+    // 无plan  
     else
     {
         IBuilder             *builder = createInferBuilder(gLogger);
@@ -60,6 +62,7 @@ void run()
         IBuilderConfig       *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
+        // 动态shape  CHW  ； 1个输入tensor  1个输出tensor   
         ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
@@ -68,6 +71,8 @@ void run()
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
+
+        // 序列化引擎  
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         if (engineString == nullptr || engineString->size() == 0)
         {
@@ -76,6 +81,7 @@ void run()
         }
         std::cout << "Succeeded building serialized engine!" << std::endl;
 
+        // 反序列化  
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
         if (engine == nullptr)
@@ -85,6 +91,7 @@ void run()
         }
         std::cout << "Succeeded building engine!" << std::endl;
 
+        // 存储 plan 
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile)
         {
@@ -111,9 +118,11 @@ void run()
         nOutput += int(engine->getTensorIOMode(vTensorName[i].c_str()) == TensorIOMode::kOUTPUT);
     }
 
+    // 执行器上下文  
     IExecutionContext *context = engine->createExecutionContext();
     context->setInputShape(vTensorName[0].c_str(), Dims32 {3, {3, 4, 5}});
 
+    // 打印 tensor 信息 
     for (int i = 0; i < nIO; ++i)
     {
         std::cout << std::string(i < nInput ? "Input [" : "Output[");
@@ -124,6 +133,7 @@ void run()
         std::cout << vTensorName[i] << std::endl;
     }
 
+    // 获得每一个tensor的 尺寸 （字节为单位）  
     std::vector<int> vTensorSize(nIO, 0);
     for (int i = 0; i < nIO; ++i)
     {
@@ -131,13 +141,13 @@ void run()
         int    size = 1;
         for (int j = 0; j < dim.nbDims; ++j)
         {
-            size *= dim.d[j];
+            size *= dim.d[j]; // 累乘 
         }
         vTensorSize[i] = size * dataTypeToSize(engine->getTensorDataType(vTensorName[i].c_str()));
     }
 
-    std::vector<void *>
-                        vBufferH {nIO, nullptr};
+    // 主机，设备端内存  
+    std::vector<void *> vBufferH {nIO, nullptr};
     std::vector<void *> vBufferD {nIO, nullptr};
     for (int i = 0; i < nIO; ++i)
     {
@@ -145,6 +155,7 @@ void run()
         CHECK(cudaMalloc(&vBufferD[i], vTensorSize[i]));
     }
 
+    // 因为只有1个 输入   
     float *pData = (float *)vBufferH[0];
 
     for (int i = 0; i < vTensorSize[0] / dataTypeToSize(engine->getTensorDataType(vTensorName[0].c_str())); ++i)
@@ -156,6 +167,7 @@ void run()
         CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vTensorSize[i], cudaMemcpyHostToDevice));
     }
 
+    // 输入输出tensor 名称与地址绑定    enqueueV3的必须操作  
     for (int i = 0; i < nIO; ++i)
     {
         context->setTensorAddress(vTensorName[i].c_str(), vBufferD[i]);
