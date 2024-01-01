@@ -1,6 +1,6 @@
-# Builder Optimization Level
+# 构建器优化级别    
 
-+ The example code create a hardware-compatibility TensorRT engine which can run on Ampere or above GPUs
++ 示例代码创建了一个硬件兼容性TensorRT引擎，该引擎可以在Ampere或更高版本的GPU上运行      
 
 ## 运行命令  
 
@@ -8,7 +8,7 @@
 python main.py
 ```
 
-## Result
+## 结果    
 
 ```txt
 Test <Level=0>
