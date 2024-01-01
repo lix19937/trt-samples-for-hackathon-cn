@@ -1,8 +1,9 @@
-# Multi-Context
+# 多上下文    
 
-+ main-MultiOptimizationProfile.py: use respective OptimizationProfile for each context, deprecated since TensorRT 8.6
++ main-MultiOptimizationProfile.py: 对每个上下文使用各自的OptimizationProfile，从TensorRT 8.6 后弃用  
 
-+ main.py: use one OptimizationProfile for all context
++ main.py: 对所有上下文使用一个OptimizationProfile
+
 
 ## 运行命令  
 
