@@ -6,4 +6,4 @@
 make test
 ```
 
-## Output for reference: ./result-*.log
+## 输出参考: ./result-*.log
