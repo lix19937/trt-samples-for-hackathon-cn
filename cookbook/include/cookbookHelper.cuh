@@ -170,6 +170,7 @@ void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
     return;
 }
 
+// 打印数组的 asum min max avg std mae   
 template<typename T>
 void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintInformation = true, bool bPrintArray = false, int n = 10)
 {
