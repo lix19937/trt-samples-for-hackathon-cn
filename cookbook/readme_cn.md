@@ -55,7 +55,7 @@
 ## 仓库目录树  
 
 ```txt
-├── 00-MNISTData   // 实例中使用的数据集    
+├── 00-MNISTData   // 示例中使用的数据集    
 │   ├── test
 │   └── train
 ├── 01-SimpleDemo  // 完整的使用示例   
@@ -131,11 +131,11 @@
 │   ├── MNISTExample-pyTorch
 │   │   └── C++
 │   ├── TypicalAPI-pyTorch
-├── 04-BuildEngineByONNXParser  // 通过onnx 解析器构建引擎  
+├── 04-BuildEngineByONNXParser   // 通过onnx 解析器构建引擎  
 │   ├── pyTorch-ONNX-TensorRT
 │   │   └── C++
 │   ├── pyTorch-ONNX-TensorRT-QAT
-├── 05-Plugin  // 自定义插件
+├── 05-Plugin                    // 自定义插件
 │   ├── C++-UsePluginInside
 │   ├── C++-UsePluginOutside
 │   ├── LoadDataFromNpz
@@ -184,7 +184,7 @@
 │   ├── NetworkPrinter   // 网络打印  
 │   ├── NsightSystems    // nsys  
 │   ├── nvtx             // 每一段时间对应的是哪一段程序 libnvToolsExt.so  https://link.zhihu.com/?target=https%3A//github.com/NVIDIA/NVTX     
-│   ├── OnnxGraphSurgeon  
+│   ├── OnnxGraphSurgeon // gs 
 │   │   └── API
 │   ├── Onnxruntime
 │   ├── Polygraphy-API
@@ -197,13 +197,13 @@
 │   │   ├── runExample
 │   │   ├── surgeonExample
 │   │   └── templateExample
-│   ├── trex      // 引擎浏览器    如看 layerinfo 的svg   
+│   ├── trex             // 引擎浏览器    如看 layerinfo 的svg   
 │   │   ├── model
 │   │   ├── trex
 │   │   └── trex.egg-info
-│   └── trtexec  // 转换与资源分析工具，可以轻量化    
-├── 08-Advance   // 高阶 
-│   ├── BuilderOptimizationLevel                   // 构建器优化级别 
+│   └── trtexec          // 转换与资源分析工具，可以轻量化    
+├── 08-Advance           // 高阶 
+│   ├── BuilderOptimizationLevel                   // 构建器优化级别，可以试验    
 │   ├── CreateExecutionContextWithoutDeviceMemory  // 不使用设备内存构建执行器上下文  
 │   ├── C++StaticCompilation      // cpp 静态编译 
 │   ├── CudaGraph                 // cuda graph
@@ -230,7 +230,7 @@
 │   ├── AlignSize                 //  对齐尺寸
 │   ├── ComputationInAdvance      // 高阶计算
 │   │   └── Convert3DMMTo2DMM     // 3D矩阵乘法到2D矩阵乘法 
-│   ├── ConvertTranposeMultiplicationToConvolution     //  转置乘法到卷积
+│   ├── ConvertTranposeMultiplicationToConvolution     // 转置乘法到卷积
 │   ├── EliminateSqueezeUnsqueezeTranspose             // 消除转置中的squeeze/unsqueeze
 │   ├── IncreaseBatchSize                              // 增大batch size
 │   ├── UsingMultiOptimizationProfile                  // 使用多个优化分析文件  
@@ -242,7 +242,7 @@
 │   ├── WeightsAreNotPermittedSinceTheyAreOfTypeInt32  // 权重类型是INT32
 │   └── WeightsHasCountXButYWasExpected                // 权重数目有误  
 ├── 51-Uncategorized
-├── 52-Deprecated  // 废弃的接口，针对8.4 版本     
+├── 52-Deprecated                                      // 废弃的接口，针对8.4 版本，可略过        
 │   ├── BindingEliminate-TRT8
 │   ├── ConcatenationLayerBUG-TRT8.4
 │   ├── ErrorWhenParsePadNode-TRT-8.4
@@ -256,11 +256,10 @@
 │   └── ShapeLayer-TRT8
 ├── 99-NotFinish
 │   └── TensorRTElementwiseBug
-└── include
+└── include                                            // 公共头文件    
 ```
 
-## 有用的链接 
-
+## 有用的链接   
 + [TensorRT Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
 + [Document](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) and [Document Archives](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
 + [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)      
