@@ -37,6 +37,8 @@ def run(nLevel):
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
 
+    print("current config.builder_optimization_level %d" % config.builder_optimization_level)
+    
     # 这里是关键点  !!!  
     # https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_builder_config.html#af51d2c96a3dcc98c345141ff93562e42
     config.builder_optimization_level = nLevel
@@ -86,6 +88,7 @@ def run(nLevel):
     for i in range(nInput):
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
+    # 绑定地址  
     for i in range(nIO):
         context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
@@ -93,6 +96,7 @@ def run(nLevel):
     context.execute_async_v3(0)
     cudart.cudaDeviceSynchronize()
 
+    # 运行10次  
     t0 = time_ns()
     for _ in range(10):
         context.execute_async_v3(0)
