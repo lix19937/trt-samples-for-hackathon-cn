@@ -26,7 +26,8 @@ shape = [4, 1024, 64]
 data = np.random.rand(*shape).reshape(shape).astype(np.float32) * 2 - 1
 
 def run(nLevel):
-    testCase = "<Level=%d>" % (nLevel)
+    testCase = "<Level=%d>" % (nLevel)  
+    # 按级别对应不同的plan 文件   
     trtFile = "model-Level%d.plan" % (nLevel)
     print("Test %s" % testCase)
 
@@ -35,8 +36,12 @@ def run(nLevel):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
+
+    # 这里是关键点  !!!  
+    # https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_builder_config.html#af51d2c96a3dcc98c345141ff93562e42
     config.builder_optimization_level = nLevel
 
+    # 搭建网络   
     inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])  # I write a "complex" network to see the performance differences
     profile.set_shape(inputTensor.name, [1] + shape[1:], shape, [16] + shape[1:])
     config.add_optimization_profile(profile)
@@ -54,15 +59,19 @@ def run(nLevel):
 
     network.mark_output(_0)
 
+    # 构建序列化引擎  
     t0 = time_ns()
     engineString = builder.build_serialized_network(network, config)
     t1 = time_ns()
     print("Time of building: %fms" % ((t1 - t0) / (10 ** 6)))
 
+    # 反序列化   
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     nIO = engine.num_io_tensors
     lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
+    # 执行器上下文  
     context = engine.create_execution_context()
     context.set_input_shape(lTensorName[0], shape)
 
@@ -80,7 +89,7 @@ def run(nLevel):
     for i in range(nIO):
         context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-    # warming up
+    # 热身  
     context.execute_async_v3(0)
     cudart.cudaDeviceSynchronize()
 
