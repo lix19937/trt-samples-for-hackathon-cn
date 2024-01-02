@@ -1,5 +1,3 @@
-`以下内容来自 lix19937 梳理精简，版权归属 NVIDIA `     
-
 # TensorRT 食谱精讲          
 
 ## 目录  
@@ -271,3 +269,6 @@
 + [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
 + [ONNX model zoo](https://github.com/onnx/models)
 ---
+
+----------------------------------------------    
+@updated by lix19937     
