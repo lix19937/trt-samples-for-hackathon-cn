@@ -84,6 +84,7 @@ def getEngine():
 def run1(engine):
     context = engine.create_execution_context()
     context.set_binding_shape(0, [nB, nC, nH, nW])
+    # 1个流  
     _, stream = cudart.cudaStreamCreate()
 
     data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
@@ -109,6 +110,7 @@ def run1(engine):
     trtTimeEnd = time()
     print("%6.3fms - 1 stream, DataCopyHtoD" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
+    # 热身  
     # Count time of inference
     for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -151,6 +153,7 @@ def run1(engine):
 def run2(engine):
     context = engine.create_execution_context()
     context.set_binding_shape(0, [nB, nC, nH, nW])
+    # 2个流  
     _, stream0 = cudart.cudaStreamCreate()
     _, stream1 = cudart.cudaStreamCreate()
     _, event0 = cudart.cudaEventCreate()
@@ -209,4 +212,5 @@ if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
     engine = getEngine()  # build TensorRT engine
     run1(engine)  # do inference with single stream
+    
     run2(engine)  # do inference with double stream
