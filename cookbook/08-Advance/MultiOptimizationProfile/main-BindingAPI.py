@@ -29,12 +29,14 @@ cudart.cudaDeviceSynchronize()
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profileList = [builder.create_optimization_profile() for _ in range(nProfile)]
 config = builder.create_builder_config()
 
-# 搭建网络  
+# 搭建网络    NCHW 动态shape   
 inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 inputT1 = network.add_input("inputT1", trt.float32, [-1, -1, -1, -1])
+
+profileList = [builder.create_optimization_profile() for _ in range(nProfile)]
+
 for profile in profileList:
     profile.set_shape(inputT0.name, shape, shape, [k * nProfile for k in shape])  # "* nProfile" is just for this example, not required in real use case
     profile.set_shape(inputT1.name, shape, shape, [k * nProfile for k in shape])
@@ -83,7 +85,7 @@ for i in range(len(bufferH)):
 
 for index in range(nProfile):
     print("Use Profile %d" % index)
-    # !!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # !!!     
     stream = streamList[index]
     context.set_optimization_profile_async(index, stream)
     bindingPad = nIO * index
