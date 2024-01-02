@@ -32,6 +32,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profileList = [builder.create_optimization_profile() for _ in range(nProfile)]
 config = builder.create_builder_config()
 
+# 搭建网络  
 inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 inputT1 = network.add_input("inputT1", trt.float32, [-1, -1, -1, -1])
 for profile in profileList:
@@ -41,25 +42,34 @@ for profile in profileList:
 
 layer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.SUM)
 network.mark_output(layer.get_output(0))
+
+# 序列化与反序列化  
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
 nIO = engine.num_bindings
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = nIO - nInput
 nIO, nInput, nOutput = nIO // nProfile, nInput // nProfile, nOutput // nProfile
 
+# 创建多个流  nProfile个  
 streamList = [cudart.cudaStreamCreate()[1] for _ in range(nProfile)]
+
+# 上下文  
 context = engine.create_execution_context()
 
 bufferH = []  # a list of buffers for all Context (all OptimizationProfile)
+# 上下文在每一个流上设置profile
 for index in range(nProfile):
     stream = streamList[index]
+    # !!!
     context.set_optimization_profile_async(index, stream)
     bindingPad = nIO * index  # skip bindings of previous OptimizationProfile occupied
     inputShape = [k * (index + 1) for k in shape]  # we use different shape for various context in this example, not required in real use case
     context.set_binding_shape(bindingPad + 0, inputShape)
     context.set_binding_shape(bindingPad + 1, inputShape)
     print("Context%d binding all? %s" % (index, "Yes" if context.all_binding_shapes_specified else "No"))
+    #
     for i in range(nIO):
         print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i))
     for i in range(nInput):
@@ -73,12 +83,14 @@ for i in range(len(bufferH)):
 
 for index in range(nProfile):
     print("Use Profile %d" % index)
+    # !!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     stream = streamList[index]
     context.set_optimization_profile_async(index, stream)
     bindingPad = nIO * index
     inputShape = [k * (index + 1) for k in shape]
     context.set_binding_shape(bindingPad + 0, inputShape)
     context.set_binding_shape(bindingPad + 1, inputShape)
+    #  
     for i in range(nIO * nProfile):
         print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
     for i in range(nInput):
