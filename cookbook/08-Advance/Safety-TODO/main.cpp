@@ -25,7 +25,8 @@ const std::string trtFile {"./model.plan"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
-{
+{    
+    // 注意 命名空间  
     safe::ICudaEngine *engine = nullptr; // 使用 safe engine
 
     if (access(trtFile.c_str(), F_OK) == 0)
@@ -100,8 +101,7 @@ void run()
     safe::IExecutionContext *context  = engine->createExecutionContext(); // 使用 safe context
     int                      nBinding = engine->getNbBindings();
     int                      nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i) {
         nInput += int(engine->bindingIsInput(i));
     }
     int nOutput = nBinding - nInput;
