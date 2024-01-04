@@ -1,17 +1,13 @@
 #
 
-## Introduction
+## 说明   
 
-+ We test the code in three scenarios.
++ 3 scenarios     
+    1. Reduce on the second dimension of input tensor: `[B, 256, T] -> [B, 1, T]`   
+    2. Add a pair of Transpose layers before and after the reduce layer: `[B, 256, T] -> [B, T, 256] -> [B, T, 1] -> [B, 1, T]`   转置后 规约   
+    3. Add an Identity layer after the first Transpose layer in scenario 2: `[B, 256, T] -> [B, T, 256] -> [B, T, 256] -> [B, T, 1] -> [B, 1, T]`
 
-    1. Reduce on the second dimension of inpute tensor: `[B, 256, T] ->[B, 1, T]`
-
-    2. Add a pair of Transpose layers before and after the reduce layer: `[B, 256, T] ->[B, T, 256] ->[B, T, 1] ->[B, 1, T]`
-
-    3. Add an Identity layer after the first Transpose layer in scenario 2: `[B, 256, T] ->[B, T, 256] ->[B, T, 256] ->[B, T, 1] ->[B, 1, T]`
-
-## Result
-
+## 结果    
 + The pair of Transpose layers in scenario 2 are fused by TensorRT (so it becomes the same as scenario 1).
 + Adding an Identity layer in scenario 3 break the fusion and force Reduce to perform reduce computation on the end dimension.
 
