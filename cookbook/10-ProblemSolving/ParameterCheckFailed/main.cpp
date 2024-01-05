@@ -59,11 +59,13 @@ public:
 int main()
 {
     Logger              gLogger(ILogger::Severity::kERROR);
+    //  构建器   config    
     IBuilder           *builder = createInferBuilder(gLogger);
     INetworkDefinition *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
     IBuilderConfig     *config  = builder->createBuilderConfig();
     config->setMaxWorkspaceSize(1 << 30);
 
+    //  搭建网络 
     ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims4 {1, 3, 600, 800});
 
     DimsHW  window {5, 5};
@@ -83,7 +85,9 @@ int main()
 
     IConvolutionLayer *convLayer = network->addConvolutionNd(*inputTensor, 32, window, kernel, bias);
 
-    network->markOutput(*convLayer->getOutput(0));
+    network->markOutput(*convLayer->getOutput(0));  
+
+    // 序列化   
     IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
     return 0;
 }
