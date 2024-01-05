@@ -1,10 +1,11 @@
 #
 
-## Introduction
+## 说明   
+转置乘法到conv的转换   
 
-## Result
+## 结果   
 
-+ Example code tests the effect on GTX 1070 and A30
++ 在 GTX 1070 and A30测试验证    
 
 + On GTX1070, small BatchSize has better acceleration effect
 
