@@ -1,15 +1,16 @@
-#
+# 属于计算图优化范畴   
 
-## Introduction
+## 说明  
 
-+ We test the code in two scenarios.
++ test the code in two scenarios.
 
   1. Conv -> Conv -> Unsqueeze -> Add -> Squeeze -> ReLU -> ... -> Conv ->Transpose -> Add -> Transpose -> ReLU -> ... -> Conv.
-  2. All Squeeze / Unsqueeze / Transpose layers in scenario 1 are removed.
+      conv 合并， Unsqueeze消除， Squeeze 消除，    
+  3. All Squeeze / Unsqueeze / Transpose layers in scenario 1 are removed.
 
-## Result
+## 结果  
 
-+ all Conv+Add+ReLU can be merged into a kernel by TensorRT
++ 所有的 Conv+Add+ReLU 合并为 1个kernel by TensorRT
 
 
 + Nearly doubled performance after optimization
