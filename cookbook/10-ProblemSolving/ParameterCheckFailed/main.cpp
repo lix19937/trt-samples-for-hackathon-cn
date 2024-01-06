@@ -57,9 +57,11 @@ public:
 };
 
 int main()
-{
+{   
+    // 设置日志级别    
     Logger              gLogger(ILogger::Severity::kERROR);
-    //  构建器   config    
+    
+    //  构建器  构建器构建网络 构建器config    
     IBuilder           *builder = createInferBuilder(gLogger);
     INetworkDefinition *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
     IBuilderConfig     *config  = builder->createBuilderConfig();
@@ -84,7 +86,6 @@ int main()
     }
 
     IConvolutionLayer *convLayer = network->addConvolutionNd(*inputTensor, 32, window, kernel, bias);
-
     network->markOutput(*convLayer->getOutput(0));  
 
     // 序列化   
