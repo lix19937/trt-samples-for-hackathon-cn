@@ -18,15 +18,20 @@ import numpy as np
 import tensorrt as trt
 
 kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # use data type of int32 rather than float32/float16
-bias = np.ones(32, dtype=np.int32)
+bias = np.ones(32, dtype=np.int32) # 这里int32  
 
-logger = trt.Logger(trt.Logger.ERROR)
+# 日志级别  
+logger = trt.Logger(trt.Logger.ERROR)  
+
+# 构建器  网络 config   
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
+
+# 搭建网络 
 inputT0 = network.add_input("inputT0", trt.float32, (1, 3, 600, 800))
-
 convolutionLayer = network.add_convolution_nd(inputT0, 32, [5, 5], kernel, bias)
-
 network.mark_output(convolutionLayer.get_output(0))
+
+# 序列化引擎  
 engineString = builder.build_serialized_network(network, config)
