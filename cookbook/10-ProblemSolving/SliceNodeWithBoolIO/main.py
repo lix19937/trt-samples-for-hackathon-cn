@@ -25,7 +25,7 @@ import tensorrt as trt
 onnxFile1 = "model-01.onnx"
 onnxFile2 = "model-02.onnx"
 
-# Create a ONNX graph with Onnx Graphsurgeon -----------------------------------
+# gs 搭建网络  Create a ONNX graph with Onnx Graphsurgeon -----------------------------------
 a0 = gs.Constant("a0", np.ascontiguousarray(np.array([0], dtype=np.int64)))
 a1 = gs.Constant("a1", np.ascontiguousarray(np.array([1], dtype=np.int64)))
 a2 = gs.Constant("a2", np.ascontiguousarray(np.array([2], dtype=np.int64)))
@@ -62,20 +62,19 @@ graph = gs.Graph(nodes=nodeList, inputs=[tensor0, tensor1], outputs=[tensor6])
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile1)
 
-# Edit the network with Onnx Graphsurgeon --------------------------------------
+# 修改网络 Edit the network with Onnx Graphsurgeon --------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile1))
 
 for node in graph.nodes:
     if node.op == "Slice" and node.name == "Slice_79":
-
-        castV0 = gs.Variable("CastV-0", np.dtype(np.int32), None)
+        castV0 = gs.Variable("CastV-0", np.dtype(np.int32), None)  # int 类型  
         castN0 = gs.Node("Cast", "CastN-0", inputs=[node.inputs[0]], outputs=[castV0], attrs=OrderedDict([("to", onnx.TensorProto.INT32)]))
         graph.nodes.append(castN0)
 
         node.inputs[0] = castV0
         nextSliceNode = node.o()
 
-        castV1 = gs.Variable("CastV-1", bool, None)
+        castV1 = gs.Variable("CastV-1", bool, None) # bool  
         castN1 = gs.Node("Cast", "CastN-1", inputs=[nextSliceNode.outputs[0]], outputs=[castV1], attrs=OrderedDict([("to", onnx.TensorProto.BOOL)]))
         graph.nodes.append(castN1)
 
