@@ -17,6 +17,7 @@
 import numpy as np
 import tensorrt as trt
 
+# 这里可以和 ../WeightsAreNotPermittedSinceTheyAreOfTypeInt32/main.py 对比   
 kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # count of weight is incorrect
 bias = np.ones(7, dtype=np.float32) # fp32  
 
