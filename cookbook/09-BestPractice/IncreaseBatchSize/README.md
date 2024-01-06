@@ -1,10 +1,10 @@
 #
 
-## Introduction
+## 说明  
 
-+ The example code attempts to infer and calculate the size of BatchSize=1~1024 for the same model
++ 调整 BatchSize=1~1024 查看infer 表现    
 
 
-## Result
+## 结果  
 
-+ With the increase of the Batch Size, the calculation delay is basically unchanged and then increases gradually, while the throughput continues to increase
++ 随着Batch Size的增加，计算延迟基本不变，然后逐渐增加，而吞吐量继续增加    
