@@ -1,6 +1,6 @@
-#
+# 对齐  
 
-## Introduction
+## 说明    
 
 + We test the code in four scenarios.
 
@@ -9,6 +9,6 @@
   3. [32,1] -> [32,255] -> [32,2048] -> [32,255] -> [32,2048] -> ... -> [32,255]
   4. [32,1] -> [32,256] -> [32,2047] -> [32,256] -> [32,2047] -> ... -> [32,256]
 
-## Result
+## 结果   
 
 + When using python script, the performance of scenario 1 and scenario 2 is close to that of scenario 3 and scenario 4.
