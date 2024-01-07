@@ -17,19 +17,18 @@
 
 #include "cookbookHelper.cuh"
 
-#include <nvToolsExtCudaRt.h>
+#include <nvToolsExtCudaRt.h>  /// 包含头文件   
 
 using namespace nvinfer1;
 
 const std::string trtFile {"./model.plan"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
-void run()
-{
+void run(){
     ICudaEngine *engine = nullptr;
 
-    if (access(trtFile.c_str(), F_OK) == 0)
-    {
+    // plan 存在  
+    if (access(trtFile.c_str(), F_OK) == 0){
         std::ifstream engineFile(trtFile, std::ios::binary);
         long int      fsize = 0;
 
@@ -38,8 +37,7 @@ void run()
         engineFile.seekg(0, engineFile.beg);
         std::vector<char> engineString(fsize);
         engineFile.read(engineString.data(), fsize);
-        if (engineString.size() == 0)
-        {
+        if (engineString.size() == 0){
             std::cout << "Failed getting serialized engine!" << std::endl;
             return;
         }
@@ -47,15 +45,14 @@ void run()
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
-        if (engine == nullptr)
-        {
+        if (engine == nullptr){
             std::cout << "Failed loading engine!" << std::endl;
             return;
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else
-    {
+    else {
+        // plan 不存在   
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
@@ -71,8 +68,7 @@ void run()
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
-        if (engineString == nullptr || engineString->size() == 0)
-        {
+        if (engineString == nullptr || engineString->size() == 0) {
             std::cout << "Failed building serialized engine!" << std::endl;
             return;
         }
@@ -80,22 +76,19 @@ void run()
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
-        if (engine == nullptr)
-        {
+        if (engine == nullptr) {
             std::cout << "Failed building engine!" << std::endl;
             return;
         }
         std::cout << "Succeeded building engine!" << std::endl;
 
         std::ofstream engineFile(trtFile, std::ios::binary);
-        if (!engineFile)
-        {
+        if (!engineFile) {
             std::cout << "Failed opening file to write" << std::endl;
             return;
         }
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
-        if (engineFile.fail())
-        {
+        if (engineFile.fail()) {
             std::cout << "Failed saving .plan file!" << std::endl;
             return;
         }
@@ -107,13 +100,11 @@ void run()
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
     int nBinding = engine->getNbBindings();
     int nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         nInput += int(engine->bindingIsInput(i));
     }
     int nOutput = nBinding - nInput;
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         std::cout << std::string("Bind[") << i << std::string(i < nInput ? "]:i[" : "]:o[") << (i < nInput ? i : i - nInput) << std::string("]->");
         std::cout << dataTypeToString(engine->getBindingDataType(i)) << std::string(" ");
         std::cout << shapeToString(context->getBindingDimensions(i)) << std::string(" ");
@@ -121,12 +112,10 @@ void run()
     }
 
     std::vector<int> vBindingSize(nBinding, 0);
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         Dims32 dim  = context->getBindingDimensions(i);
         int    size = 1;
-        for (int j = 0; j < dim.nbDims; ++j)
-        {
+        for (int j = 0; j < dim.nbDims; ++j){
             size *= dim.d[j];
         }
         vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
@@ -134,47 +123,41 @@ void run()
 
     std::vector<void *> vBufferH {nBinding, nullptr};
     std::vector<void *> vBufferD {nBinding, nullptr};
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         vBufferH[i] = (void *)new char[vBindingSize[i]];
         CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
-    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i)
-    {
+    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i){
         pData[i] = float(i);
     }
 
-    nvtxRangePush("test");
-    for (int i = 0; i < nInput; ++i)
-    {
+    nvtxRangePush("test"); /// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+    
+    for (int i = 0; i < nInput; ++i){
         CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
     }
 
     context->executeV2(vBufferD.data());
 
-    for (int i = nInput; i < nBinding; ++i)
-    {
+    for (int i = nInput; i < nBinding; ++i){
         CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
-    nvtxRangePop();
+    nvtxRangePop(); /// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
-    for (int i = 0; i < nBinding; ++i)
-    {
+    for (int i = 0; i < nBinding; ++i){
         delete[] vBufferH[i];
         CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
-int main()
-{
+int main(){
     CHECK(cudaSetDevice(0));
     run();
     run();
