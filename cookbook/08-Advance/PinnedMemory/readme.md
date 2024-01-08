@@ -26,6 +26,6 @@ cudaError_t cudaHostAlloc	(	void ** 	pHost,
 
 ref   
 
-https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__HIGHLEVEL.html#group__CUDART__HIGHLEVEL_1gd5c991beb38e2b8419f50285707ae87e    
-https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#page-locked-host-memory    
+https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__HIGHLEVEL.html#group__CUDART__HIGHLEVEL_1gd5c991beb38e2b8419f50285707ae87e       
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#page-locked-host-memory       
 https://developer.download.nvidia.cn/compute/DevZone/docs/html/C/doc/html/group__CUDART__MEMORY_g15a3871f15f8c38f5b7190946845758c.html    
