@@ -25,3 +25,5 @@ void beginCapture(cudaStream_t& stream){
     CHECK(cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal));
 }
 ```
+
+更多内容 https://github.com/lix19937/history/blob/main/cuda/cudagraph.md     
