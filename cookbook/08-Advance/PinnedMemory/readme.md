@@ -29,7 +29,10 @@ __host__​cudaError_t cudaHostRegister ( void* ptr, size_t size, unsigned int  
 Registers an existing host memory range for use by CUDA.
 ```
 
-是否修改了ptr 空间的内容  
+是否修改了ptr 空间的内容？  
+ptr值没有改变   
+
+更多内容 https://github.com/lix19937/history/blob/main/cuda/%E9%94%81%E9%A1%B5%E5%86%85%E5%AD%98.md    
 
 ------------------------------------
 
