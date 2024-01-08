@@ -20,7 +20,7 @@ cudaError_t cudaHostAlloc	(void ** 	pHost,
 
 **cudaHostAlloc** vs  **cudaMallocHost**        
 
-[v](./cha_cmh.png)     
+![v](./cha_cmh.png)     
 
 
 ## cudaHostRegister   
@@ -28,6 +28,8 @@ cudaError_t cudaHostAlloc	(void ** 	pHost,
 __host__​cudaError_t cudaHostRegister ( void* ptr, size_t size, unsigned int  flags )   
 Registers an existing host memory range for use by CUDA.
 ```
+
+是否修改了ptr 空间的内容  
 
 ------------------------------------
 
