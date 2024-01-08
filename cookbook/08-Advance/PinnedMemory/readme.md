@@ -20,6 +20,7 @@ cudaError_t cudaHostAlloc	(	void ** 	pHost,
 
 **cudaHostAlloc** vs  **cudaMallocHost**        
 
+
 ------------------------------------
 
 ref   
