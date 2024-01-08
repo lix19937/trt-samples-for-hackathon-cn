@@ -1,9 +1,11 @@
-#
+# 动态shape   
 
-## Introduction
+## 说明  
 
-+ The example code tries two dynamic range strategies for the same model. The first (model-1. plan) uses an entire Optimization Profile, and the second (model-2. plan) uses two segmented Optimization Profiles for large and small shapes, and then tests the performance under different input data shapes
++ 使用 2 种动态范围策略.
+  + 使用1个完整的优化配置     
+  + 针对大尺寸和小尺寸使用两个分段的优化配置文件，然后测试不同输入数据形状下的性能      
 
-## Result
+## 结果  
 
-+ The overall performance will be better with multiple Optimization Profiles
++ 使用多优化配置文件的效果更好  
