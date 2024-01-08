@@ -20,7 +20,7 @@ cudaError_t cudaHostAlloc	(	void ** 	pHost,
 
 **cudaHostAlloc** vs  **cudaMallocHost**        
 
-![](./cha_cmh.png)     
+![v](./cha_cmh.png)     
 
 ------------------------------------
 
