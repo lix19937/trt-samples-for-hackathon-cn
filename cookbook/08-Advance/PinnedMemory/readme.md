@@ -11,3 +11,9 @@ if ((cudaHostAlloc((void **)&h_out_data, nbytes, cudaHostAllocMapped)) != 0){
 
 cudaHostGetDevicePointer((void **)&d_out_data, (void *)h_out_data, 0);     
 ```          
+
+------------------------------------
+
+ref   
+
+https://developer.download.nvidia.cn/compute/DevZone/docs/html/C/doc/html/group__CUDART__MEMORY_g15a3871f15f8c38f5b7190946845758c.html
