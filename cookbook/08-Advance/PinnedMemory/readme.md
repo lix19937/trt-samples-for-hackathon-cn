@@ -2,13 +2,10 @@
 
 ```cpp
 auto nbytes = data_size * sizeof(int);
-if ((cudaHostAlloc((void **)&h_out_data, nbytes, cudaHostAllocMapped)) != 0)
-{
+if ((cudaHostAlloc((void **)&h_out_data, nbytes, cudaHostAllocMapped)) != 0){
     printf("ERROR, cudaHostAlloc in %s at line %d", __FILE__, __LINE__);
     return false;
-}
-else
-{
+}else{
     printf("cudaHostAlloc output buffer [%d] success!", nbytes);
 }
 
