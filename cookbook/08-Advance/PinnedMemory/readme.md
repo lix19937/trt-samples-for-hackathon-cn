@@ -13,14 +13,21 @@ cudaHostGetDevicePointer((void **)&d_out_data, (void *)h_out_data, 0);
 ```          
 
 ```c
-cudaError_t cudaHostAlloc	(	void ** 	pHost,
-                                size_t 	size,
-                                unsigned int 	flags	)	
+cudaError_t cudaHostAlloc	(void ** 	pHost,
+                             size_t 	size,
+                             unsigned int 	flags)	
 ```
 
 **cudaHostAlloc** vs  **cudaMallocHost**        
 
-![v](./cha_cmh.png)     
+[v](./cha_cmh.png)     
+
+
+## cudaHostRegister   
+```cpp
+__host__​cudaError_t cudaHostRegister ( void* ptr, size_t size, unsigned int  flags )   
+Registers an existing host memory range for use by CUDA.
+```
 
 ------------------------------------
 
