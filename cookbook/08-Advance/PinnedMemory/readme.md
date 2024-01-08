@@ -12,6 +12,12 @@ if ((cudaHostAlloc((void **)&h_out_data, nbytes, cudaHostAllocMapped)) != 0){
 cudaHostGetDevicePointer((void **)&d_out_data, (void *)h_out_data, 0);     
 ```          
 
+
+```c
+cudaError_t cudaHostAlloc	(	void ** 	pHost,
+                                size_t 	size,
+                                unsigned int 	flags	)	
+```
 ------------------------------------
 
 ref   
