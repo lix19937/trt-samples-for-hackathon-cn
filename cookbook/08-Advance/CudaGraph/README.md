@@ -15,15 +15,13 @@ make test
 
 **cudaStreamCaptureModeGlobal** vs **cudaStreamCaptureModeThreadLocal**         
 ```cpp 
-    void beginCapture(TrtCudaStream& stream)
-    {
-        cudaCheck(cudaStreamBeginCapture(stream.get(), cudaStreamCaptureModeThreadLocal));
-    }
+void beginCapture(TrtCudaStream& stream){
+    cudaCheck(cudaStreamBeginCapture(stream.get(), cudaStreamCaptureModeThreadLocal));
+}
 ```
 ```cpp  
-    void beginCapture(cudaStream_t& stream)
-    {
-        // cudaStreamCaptureModeGlobal is the only allowed mode in SAFE CUDA
-        CHECK(cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal));
-    }
+void beginCapture(cudaStream_t& stream){
+    // cudaStreamCaptureModeGlobal is the only allowed mode in SAFE CUDA
+    CHECK(cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal));
+}
 ```
