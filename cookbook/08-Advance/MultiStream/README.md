@@ -5,3 +5,6 @@
 ```shell
 python3 main.py
 ```
+
+
+**cudaStreamCreateWithFlags** vs  **cudaStreamCreate**         
