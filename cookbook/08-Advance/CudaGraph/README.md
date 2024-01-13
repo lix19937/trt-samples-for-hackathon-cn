@@ -27,7 +27,7 @@ void beginCapture(cudaStream_t& stream){
 ```
 
 
-the DLA suggraph as a single big kernel. CUDA graph don't support it.      
+**the DLA suggraph as a single big kernel. CUDA graph don't support it.**     
 
 
 更多内容 https://github.com/lix19937/history/blob/main/cuda/cudagraph.md     
