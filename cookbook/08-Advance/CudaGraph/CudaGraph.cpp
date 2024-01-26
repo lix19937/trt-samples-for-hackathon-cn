@@ -22,13 +22,11 @@ using namespace nvinfer1;
 const std::string trtFile {"./model.plan"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
-void run()
-{
+void run(){
     ICudaEngine *engine = nullptr;
     
     // 如果有plan 
-    if (access(trtFile.c_str(), F_OK) == 0)
-    {
+    if (access(trtFile.c_str(), F_OK) == 0) {
         std::ifstream engineFile(trtFile, std::ios::binary);
         long int      fsize = 0;
 
@@ -37,8 +35,7 @@ void run()
         engineFile.seekg(0, engineFile.beg);
         std::vector<char> engineString(fsize);
         engineFile.read(engineString.data(), fsize);
-        if (engineString.size() == 0)
-        {
+        if (engineString.size() == 0){
             std::cout << "Failed getting serialized engine!" << std::endl;
             return;
         }
@@ -46,15 +43,13 @@ void run()
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
-        if (engine == nullptr)
-        {
+        if (engine == nullptr) {
             std::cout << "Failed loading engine!" << std::endl;
             return;
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else // 无plan，搭建网络 
-    {
+    else {// 无plan，搭建网络 
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
@@ -70,8 +65,7 @@ void run()
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
-        if (engineString == nullptr || engineString->size() == 0)
-        {
+        if (engineString == nullptr || engineString->size() == 0) {
             std::cout << "Failed building serialized engine!" << std::endl;
             return;
         }
@@ -79,22 +73,19 @@ void run()
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
-        if (engine == nullptr)
-        {
+        if (engine == nullptr) {
             std::cout << "Failed building engine!" << std::endl;
             return;
         }
         std::cout << "Succeeded building engine!" << std::endl;
 
         std::ofstream engineFile(trtFile, std::ios::binary);
-        if (!engineFile)
-        {
+        if (!engineFile){
             std::cout << "Failed opening file to write" << std::endl;
             return;
         }
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
-        if (engineFile.fail())
-        {
+        if (engineFile.fail()){
             std::cout << "Failed saving .plan file!" << std::endl;
             return;
         }
@@ -122,13 +113,13 @@ void run()
     for (int i = 0; i < nBinding; ++i) {
         Dims32 dim  = context->getBindingDimensions(i);
         int    size = 1;
-        for (int j = 0; j < dim.nbDims; ++j)
-        {
+        for (int j = 0; j < dim.nbDims; ++j) {
             size *= dim.d[j];
         }
         vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
     }
 
+    // 主机指针  
     std::vector<void *> vBufferH {nBinding, nullptr};
     // 设备指针 
     std::vector<void *> vBufferD {nBinding, nullptr};
@@ -149,6 +140,7 @@ void run()
     }
     std::vector<float>  inputH0(inputSize, 1.0f);
     std::vector<float>  outputH0(outputSize, 0.0f);
+    
     // bindings 指针buff
     std::vector<void *> binding = {nullptr, nullptr};
     CHECK(cudaMalloc(&binding[0], sizeof(float) * inputSize));
@@ -173,12 +165,13 @@ void run()
     for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
-    cudaStreamSynchronize(stream); // 不用在 graph 内同步
+    cudaStreamSynchronize(stream); // 同步操作不用在 graph 内同步
 
     for (int i = 0; i < nBinding; ++i){
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
+    //----------------------------------------------------------------------   
     // 首次捕获 CUDA Graph 并运行推理
     cudaGraph_t     graph;
     cudaGraphExec_t graphExec = nullptr;
@@ -257,6 +250,7 @@ void run()
 
 int main(){
     CHECK(cudaSetDevice(0));
+    // 热身一次   
     run();
     run();
     return 0;
