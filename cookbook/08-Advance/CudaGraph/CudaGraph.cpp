@@ -34,6 +34,7 @@ void run(){
         fsize = engineFile.tellg();
         engineFile.seekg(0, engineFile.beg);
         std::vector<char> engineString(fsize);
+        // 从磁盘读文件  
         engineFile.read(engineString.data(), fsize);
         if (engineString.size() == 0){
             std::cout << "Failed getting serialized engine!" << std::endl;
@@ -41,7 +42,9 @@ void run(){
         }
         std::cout << "Succeeded getting serialized engine!" << std::endl;
 
-        IRuntime *runtime {createInferRuntime(gLogger)};
+        // 构建rt 对象  
+        IRuntime *runtime {createInferRuntime(gLogger)};  
+        // 反序列化内存数据(序列化的)
         engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
         if (engine == nullptr) {
             std::cout << "Failed loading engine!" << std::endl;
@@ -49,7 +52,7 @@ void run(){
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else {// 无plan，搭建网络 
+    else {// 无plan，从trt api 搭建网络 
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
@@ -61,9 +64,10 @@ void run(){
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
-
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
+
+        // 构建序列化网络 
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         if (engineString == nullptr || engineString->size() == 0) {
             std::cout << "Failed building serialized engine!" << std::endl;
@@ -71,6 +75,7 @@ void run(){
         }
         std::cout << "Succeeded building serialized engine!" << std::endl;
 
+        // 反序列化引擎  
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
         if (engine == nullptr) {
@@ -79,6 +84,7 @@ void run(){
         }
         std::cout << "Succeeded building engine!" << std::endl;
 
+        // 保存plan文件 
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile){
             std::cout << "Failed opening file to write" << std::endl;
@@ -128,11 +134,13 @@ void run(){
         CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
+    // 赋值  
     float *pData = (float *)vBufferH[0];
     for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i) {
         pData[i] = float(i);
     }
 
+    // 给主机buff分配空间  
     int  inputSize = 3 * 4 * 5, outputSize = 1;
     Dims outputShape = context->getBindingDimensions(1);
     for (int i = 0; i < outputShape.nbDims; ++i) {
@@ -141,7 +149,7 @@ void run(){
     std::vector<float>  inputH0(inputSize, 1.0f);
     std::vector<float>  outputH0(outputSize, 0.0f);
     
-    // bindings 指针buff
+    // bindings 即输入输出指针 
     std::vector<void *> binding = {nullptr, nullptr};
     CHECK(cudaMalloc(&binding[0], sizeof(float) * inputSize));
     CHECK(cudaMalloc(&binding[1], sizeof(float) * outputSize));
@@ -149,7 +157,7 @@ void run(){
         inputH0[i] = (float)i;
     }
 
-    // 运行推理和使用 CUDA Graph 要用的流
+    // 运行推理和使用 CUDA Graph 要用的流 ； 类的构造或init  
     cudaStream_t stream;
     CHECK(cudaStreamCreate(&stream));
 
@@ -175,6 +183,7 @@ void run(){
     // 首次捕获 CUDA Graph 并运行推理
     cudaGraph_t     graph;
     cudaGraphExec_t graphExec = nullptr;
+    
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
     
     for (int i = 0; i < nInput; ++i) {
