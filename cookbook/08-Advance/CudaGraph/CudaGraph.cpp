@@ -176,6 +176,7 @@ void run(){
     cudaGraph_t     graph;
     cudaGraphExec_t graphExec = nullptr;
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
+    
     for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
@@ -185,11 +186,15 @@ void run(){
     for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
+    
     cudaStreamEndCapture(stream, &graph);
     cudaGraphInstantiate(&graphExec, graph, nullptr, nullptr, 0);
+    //-----------------------捕获结束-----------------------------------------------   
 
-    //----------------------------------------------------------------------
+    //-----------------------graph 执行 -----------------------------------------------
     cudaGraphLaunch(graphExec, stream);
+    
+    // 等待执行完   
     cudaStreamSynchronize(stream);
 
     // 输入尺寸改变后，也需要首先运行一次推理，然后重新捕获 CUDA Graph，最后再运行推理
@@ -205,6 +210,7 @@ void run(){
         vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
     }
 
+    
     // 这里偷懒，因为本次推理绑定的输入输出数据形状不大于上一次推理，所以这里不再重新准备所有 buffer
     for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
@@ -221,8 +227,10 @@ void run(){
         printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
+    //----------------------------------------------------------------------   
     // 再次捕获 CUDA Graph 并运行推理
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
+    
     for (int i = 0; i < nInput; ++i) {
         CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
@@ -232,11 +240,15 @@ void run(){
     for (int i = nInput; i < nBinding; ++i) {
         CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
-    //cudaStreamSynchronize(stream); // 注意，不用在 graph 内同步
+    
     cudaStreamEndCapture(stream, &graph);
     cudaGraphInstantiate(&graphExec, graph, nullptr, nullptr, 0);
+    //-----------------------捕获结束-----------------------------------------------   
 
+    //-----------------------graph 执行 -----------------------------------------------
     cudaGraphLaunch(graphExec, stream);
+
+    // 等待   
     cudaStreamSynchronize(stream);
 
     cudaStreamDestroy(stream);
@@ -252,6 +264,7 @@ int main(){
     CHECK(cudaSetDevice(0));
     // 热身一次   
     run();
+    
     run();
     return 0;
 }
