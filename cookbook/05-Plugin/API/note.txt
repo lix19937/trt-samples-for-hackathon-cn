@@ -1,3 +1,5 @@
+# 打印插件属性等信息    
+
 print(attach_to_context())
 print(plugin.clone())
 print(plugin.configure_plugin())
