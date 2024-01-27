@@ -10,4 +10,6 @@ cd C++
 make test
 ```
 
-## 输出参考: result.log and C++/result.log
+## 输出参考  
+result.log     
+C++/result.log    
