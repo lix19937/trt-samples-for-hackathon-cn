@@ -6,6 +6,8 @@
 
 ```shell
 python3 main.py
+
+# cpp version   
 cd C++
 make test
 ```
