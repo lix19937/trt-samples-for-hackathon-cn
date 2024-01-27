@@ -1,7 +1,10 @@
 
 
-使用TRT API的基本示例     
+# 使用TRT API的基本示例     
 
+* 直接load plan文件进行推理    
+* 直接使用trt api 搭建网络进行推理     
+  
 ## 编译命令    
 ```shell
 make test
