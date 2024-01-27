@@ -4,7 +4,7 @@
 
 ```shell
 cd ..
-python3 main.py
+python3 createCalibrationAndInferenceData.py   
 
 cd C++
 make  
