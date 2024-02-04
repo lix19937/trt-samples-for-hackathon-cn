@@ -1,4 +1,8 @@
-# TensorRT Cookbook
+
+> commit id:e8568c417356f7e66bb9b7130d6be7e55324a519
+> 尽量知晓cuda的方方面面，为部署加速再上一层楼！
+
+--------------------
 
 ## [中文版](./readme_cn.md)    
 
