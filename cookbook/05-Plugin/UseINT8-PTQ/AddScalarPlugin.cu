@@ -99,6 +99,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
 
 void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept{
     WHERE_AM_I();
+    // 量化因子
     m_.scale = in[0].desc.scale;
     return;
 }
