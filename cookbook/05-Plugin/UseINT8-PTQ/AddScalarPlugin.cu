@@ -20,8 +20,7 @@
 template<typename T>
 __global__ void addScalarKernel(const T *input, T *output, const T scalar, const int nElement){
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index >= nElement)
-        return;
+    if (index >= nElement) return;
 
     T _1          = input[index];
     T _2          = _1 + scalar;
@@ -29,7 +28,7 @@ __global__ void addScalarKernel(const T *input, T *output, const T scalar, const
 }
 
 namespace nvinfer1{
-// class AddScalarPlugin
+
 AddScalarPlugin::AddScalarPlugin(const std::string &name, float scalar): name_(name){
     WHERE_AM_I();
     m_.scalar = scalar;
@@ -66,7 +65,7 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
     return inputs[0];
 }
 
-/// 重要函数  
+/// 重要函数  DataType & TensorFormat
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept{
     WHERE_AM_I();
     bool res;
@@ -101,6 +100,7 @@ void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t
     WHERE_AM_I();
     // 量化因子
     m_.scale = in[0].desc.scale;
+
     return;
 }
 
@@ -129,7 +129,7 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
         (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
         break;
 
-    case int(DataType::kINT8)://///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    case int(DataType::kINT8):/// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #ifdef DEBUG
         printf("\tINT8 kernel!\n");
 #endif
@@ -138,6 +138,7 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
         //// int8 kernel  
         (addScalarKernel<int8_t>)<<<grid, block, 0, stream>>>(reinterpret_cast<const int8_t *>(inputs[0]), reinterpret_cast<int8_t *>(outputs[0]), int8_t(m_.scalar / m_.scale), nElement);
         break;
+
     default: // should NOT be here
         printf("\tUnsupport datatype!\n");
     }
