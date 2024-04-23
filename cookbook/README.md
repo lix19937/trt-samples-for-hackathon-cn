@@ -8,4 +8,4 @@
 
 |目录|说明|备注|     
 |----|----|----|     
-|04-BuildEngineByONNXParser|pyTorch-ONNX-TensorRT-QAT| |    
+|04-BuildEngineByONNXParser|pyTorch-ONNX-TensorRT-QAT   PTQ| |    
