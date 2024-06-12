@@ -18,7 +18,7 @@
 |08-Advance |高级功能，具体可[进入](./08-Advance)查看 |  |    
 |09-BestPractice |优化相关，具体可[进入](./09-BestPractice)查看|  |      
 |10-ProblemSolving |问题相关，具体可[进入](./10-ProblemSolving)查看|  |       
-|51-Uncategorized| 未分类，如tensor格式，数据格式||      
+|51-Uncategorized| 未分类，如tensor格式，数据格式，具体可[进入](./51-Uncategorized)查看||      
 
 
 
