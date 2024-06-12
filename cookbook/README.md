@@ -8,7 +8,7 @@
 |目录|说明|备注|     
 |----|----|----|      
 |load plan|https://github.com/lix19937/history/blob/main/zz/05_using_tensorrt_network_api/example_batch_288.py#L133| |      
-|01-SimpleDemo/TensorRT8.5|cpp/python load plan| |      
+|01-SimpleDemo|cpp/python load plan| |      
 |02-API|相关API，具体可[进入](./02-API)查看|  |   
 |03-BuildEngineByTensorRTAPI|cpp/python PTQ|   |    
 |04-BuildEngineByONNXParser|QAT   PTQ，具体可[进入](./04-BuildEngineByONNXParser)查看|    |     
