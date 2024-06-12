@@ -13,7 +13,7 @@
 |03-BuildEngineByTensorRTAPI|cpp/python PTQ|   |    
 |04-BuildEngineByONNXParser|QAT   PTQ，具体可[进入](./04-BuildEngineByONNXParser)查看|    |     
 |05-Plugin|插件开发相关，具体可[进入](./05-Plugin)查看|  |   
-|06-UseFrameworkTRT/Torch-TensorRT |torch_tensorrt使用 |  |   
+|06-UseFrameworkTRT|torch_tensorrt使用 |  |   
 |07-Tool |开发工具，具体可[进入](./07-Tool)查看 |  |   
 |08-Advance |高级功能，具体可[进入](./08-Advance)查看 |  |    
 |09-BestPractice |优化相关，具体可[进入](./09-BestPractice)查看|  |      
