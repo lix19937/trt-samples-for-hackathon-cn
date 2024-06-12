@@ -11,7 +11,7 @@
 |01-SimpleDemo/TensorRT8.5|cpp/python load plan| |      
 |02-API|相关API，具体可[进入](./02-API/readme.md)查看|  |   
 |03-BuildEngineByTensorRTAPI/MNISTExample-pyTorch| cpp/python PTQ|   |    
-|04-BuildEngineByONNXParser|pyTorch-ONNX-TensorRT-QAT   PTQ|    |     
+|04-BuildEngineByONNXParser|QAT   PTQ，具体可[进入](./04-BuildEngineByONNXParser/readme.md)查看|    |     
 |05-Plugin|插件开发相关，具体可[进入](./05-Plugin/readme.md)查看|  |   
 |06-UseFrameworkTRT/Torch-TensorRT |torch_tensorrt使用 |  |   
 |07-Tool |开发工具，具体可[进入](./07-Tool/readme.md)查看 |  |   
