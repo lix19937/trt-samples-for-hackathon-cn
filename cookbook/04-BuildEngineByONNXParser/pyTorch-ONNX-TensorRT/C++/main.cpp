@@ -44,7 +44,7 @@ int main()
     CHECK(cudaSetDevice(0));
     ICudaEngine *engine = nullptr;
 
-    if (access(trtFile.c_str(), F_OK) == 0)
+    if (access(trtFile.c_str(), F_OK) == 0) // 有plan文件  
     {
         std::ifstream engineFile(trtFile, std::ios::binary);
         long int      fsize = 0;
@@ -70,7 +70,7 @@ int main()
         }
         std::cout << "Succeeded loading engine!" << std::endl;
     }
-    else
+    else // 没有plan文件， 从 onnx文件构建   
     {
         IBuilder             *builder     = createInferBuilder(gLogger);
         INetworkDefinition   *network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
