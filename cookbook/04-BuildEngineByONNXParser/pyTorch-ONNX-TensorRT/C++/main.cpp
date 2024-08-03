@@ -137,6 +137,8 @@ int main()
         {
             delete pCalibrator;
         }
+
+        /// 存储 plan文件到磁盘    
         /*
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile)
